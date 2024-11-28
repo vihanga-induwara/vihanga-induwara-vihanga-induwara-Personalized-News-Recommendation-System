@@ -1,0 +1,2 @@
+# vihanga-induwara-vihanga-induwara-Personalized-News-Recommendation-System
+A Java-based Personalized News Recommendation System using Object-Oriented Programming, NLP, and ML to recommend articles based on user preferences. Features include user management, article categorization, concurrency, exception handling, file handling, and database integration, ensuring dynamic and tailored recommendations.
