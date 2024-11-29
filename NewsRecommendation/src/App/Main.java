@@ -1,9 +1,11 @@
 package App;
 
-import DB.DatabaseHandler; // Ensure you only import from DB or Service, not both
+import DB.DatabaseHandler;
 import Model.Admin;
+import Model.Article;
 import Model.GeneralUser;
 import Service.ArticalFetcher;
+import Service.RecommendationEngine;
 
 
 import java.sql.ResultSet;
@@ -11,26 +13,25 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
 
+
 public class Main {
     private static final Scanner input = new Scanner(System.in);
-    private final DatabaseHandler dbHandler = new DatabaseHandler(); // Using DB.DatabaseHandler
+    private final DatabaseHandler dbHandler = new DatabaseHandler(); // Assuming DatabaseHandler handles DB operations
+    private boolean isAdminLoggedIn = false;
+    private boolean isUserLoggedIn = false;
 
     public static void main(String[] args) {
         Main app = new Main();
-        app.displayMenu();
+        app.displayMainMenu();
     }
 
-    public void displayMenu() {
+    public void displayMainMenu() {
         while (true) {
             System.out.println("\nMain Menu:");
             System.out.println("1. Login");
             System.out.println("2. Registration");
-            System.out.println("3. View Today's Top News");
-            System.out.println("4. Categorical News");
-            System.out.println("5. View Recommended News");
-            System.out.println("6. View My User Profile");
-            System.out.println("7. Admin Login");
-            System.out.println("8. Exit");
+            System.out.println("3. Admin Login");
+            System.out.println("4. Exit");
             System.out.print("Choose an option: ");
 
             int choice = input.nextInt();
@@ -39,26 +40,20 @@ public class Main {
             switch (choice) {
                 case 1:
                     handleUserLogin();
+                    if (isUserLoggedIn) {
+                        displayUserDashboard();
+                    }
                     break;
                 case 2:
                     handleUserRegistration();
                     break;
                 case 3:
-                    viewTodaysTopNews();
+                    handleAdminLogin();
+                    if (isAdminLoggedIn) {
+                        displayAdminDashboard();
+                    }
                     break;
                 case 4:
-                    viewCategoricalNews();
-                    break;
-                case 5:
-                    viewRecommendedNews();
-                    break;
-                case 6:
-                    viewUserProfile();
-                    break;
-                case 7:
-                    handleAdminLogin();
-                    break;
-                case 8:
                     System.out.println("Exiting...");
                     return; // Exit the application
                 default:
@@ -66,6 +61,105 @@ public class Main {
                     break;
             }
         }
+    }
+
+    private void displayUserDashboard() {
+        while (true) {
+            System.out.println("\nUser Dashboard:");
+            System.out.println("1. View Today's Top News");
+            System.out.println("2. Categorical News");
+            System.out.println("3. View Recommended News");
+            System.out.println("4. View My User Profile");
+            System.out.println("5. Back to Main Menu");
+            System.out.println("6. Logout");
+            System.out.print("Choose an option: ");
+
+            int choice = input.nextInt();
+            input.nextLine(); // Clear buffer
+
+            switch (choice) {
+                case 1:
+                    viewTodaysTopNews();
+                    break;
+                case 2:
+                    viewCategoricalNews();
+                    break;
+                case 3:
+                    viewRecommendedNews();
+                    break;
+                case 4:
+                    viewUserProfile();
+                    break;
+                case 5:
+                    return; // Return to Main Menu
+                case 6:
+                    isUserLoggedIn = false;
+                    System.out.println("Logged out successfully.");
+                    return;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+                    break;
+            }
+
+            if (!isUserLoggedIn) {
+                return; // Exit dashboard if logged out
+            }
+        }
+    }
+
+    private void displayAdminDashboard() {
+        while (true) {
+            System.out.println("\nAdmin Dashboard:");
+            System.out.println("1. Manage Users");
+            System.out.println("2. Manage News");
+            System.out.println("3. View System Logs");
+            System.out.println("4. Back to Main Menu");
+            System.out.println("5. Logout");
+            System.out.print("Choose an option: ");
+
+            int choice = input.nextInt();
+            input.nextLine(); // Clear buffer
+
+            switch (choice) {
+                case 1:
+                    manageUsers();
+                    break;
+                case 2:
+                    manageNews();
+                    break;
+                case 3:
+                    viewSystemLogs();
+                    break;
+                case 4:
+                    return; // Return to Main Menu
+                case 5:
+                    isAdminLoggedIn = false;
+                    System.out.println("Logged out successfully.");
+                    return;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+                    break;
+            }
+
+            if (!isAdminLoggedIn) {
+                return; // Exit dashboard if logged out
+            }
+        }
+    }
+
+    private void manageUsers() {
+        System.out.println("Managing users...");
+        // Add logic to manage users
+    }
+
+    private void manageNews() {
+        System.out.println("Managing news...");
+        // Add logic to manage news
+    }
+
+    private void viewSystemLogs() {
+        System.out.println("Viewing system logs...");
+        // Add logic to display system logs
     }
 
     private void handleUserLogin() {
@@ -79,6 +173,7 @@ public class Main {
             GeneralUser user = dbHandler.validateUserLogin(username, password);
             if (user != null) {
                 System.out.println("Login successful! Welcome, " + user.getName());
+                displayUserDashboard();
             } else {
                 System.out.println("Invalid username or password.");
             }
@@ -129,12 +224,12 @@ public class Main {
 
         try {
             // Fetch today's top news
-            List<String> topNews = fetcher.fetchTopNews();
+            List<Article> topNews = fetcher.fetchTopNews(); // Fetch Article objects
 
             while (true) {
                 System.out.println("\n========== Today's Top News ==========");
                 for (int i = 0; i < topNews.size(); i++) {
-                    System.out.println((i + 1) + ". " + topNews.get(i));
+                    System.out.println((i + 1) + ". " + topNews.get(i).getTitle());
                 }
                 System.out.println("======================================");
                 System.out.println("Options:");
@@ -146,12 +241,17 @@ public class Main {
                 scanner.nextLine(); // Clear the buffer
 
                 if (choice == 0) {
-                    System.out.println("Returning to the main menu...");
+                    System.out.println("Returning to the User Main menu...");
+                    displayUserDashboard();
                     break;
                 } else if (choice > 0 && choice <= topNews.size()) {
-                    // Display full article (currently just the title for demo purposes)
+                    // Display full article details
+                    Article selectedArticle = topNews.get(choice - 1);
                     System.out.println("\n========== Article Details ==========");
-                    System.out.println("Title: " + topNews.get(choice - 1));
+                    System.out.println("Title: " + selectedArticle.getTitle());
+                    System.out.println("Author: " + selectedArticle.getAuthor());
+                    System.out.println("Published Date: " + selectedArticle.getPublishedDate());
+                    System.out.println("\nContent:\n" + selectedArticle.getContent());
                     System.out.println("======================================");
                     System.out.println("Press Enter to return to the news list.");
                     scanner.nextLine();
@@ -171,12 +271,12 @@ public class Main {
 
         try {
             // Fetch news for the given category
-            List<String> news = fetcher.fetchNewsByCategory(category);
+            List<Article> news = fetcher.fetchNewsByCategory(category);
             if (news.isEmpty()) {
                 System.out.println("No news articles found for the category: " + category);
             } else {
                 System.out.println("News in category '" + category + "':");
-                for (String article : news) {
+                for (Article article : news) {
                     System.out.println("- " + article);
                 }
             }
@@ -186,7 +286,16 @@ public class Main {
     }
 
     private void viewRecommendedNews() {
-        System.out.println("Feature to view recommended news is under construction.");
+        RecommendationEngine recommendationEngine = new RecommendationEngine();
+
+        // Get recommendations for a specific user (e.g., userId: 1)
+        List<String> recommendedNews = recommendationEngine.getRecommendations(1);
+
+        // Display the recommended news
+        System.out.println("Recommended News Articles:");
+        for (String news : recommendedNews) {
+            System.out.println("- " + news);
+        }
     }
 
     private void viewUserProfile() {
@@ -249,7 +358,5 @@ public class Main {
             System.out.println("Error occurred while logging in as admin: " + e.getMessage());
         }
     }
-
-
 
 }

@@ -1,5 +1,6 @@
 package Service;
 
+import Model.Article;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -17,10 +18,10 @@ public class ArticalFetcher {
     /**
      * Fetch top news articles.
      *
-     * @return List of article titles
+     * @return List of Article objects
      * @throws Exception if fetching news fails
      */
-    public List<String> fetchTopNews() throws Exception {
+    public List<Article> fetchTopNews() throws Exception {
         return fetchNews("country=us");
     }
 
@@ -28,10 +29,10 @@ public class ArticalFetcher {
      * Fetch news articles by category.
      *
      * @param category the category to filter news
-     * @return List of article titles
+     * @return List of Article objects
      * @throws Exception if fetching news fails
      */
-    public List<String> fetchNewsByCategory(String category) throws Exception {
+    public List<Article> fetchNewsByCategory(String category) throws Exception {
         return fetchNews("category=" + category + "&country=us");
     }
 
@@ -39,11 +40,11 @@ public class ArticalFetcher {
      * Generic method to fetch news based on query parameters.
      *
      * @param queryParams the query parameters for the API call
-     * @return List of article titles
+     * @return List of Article objects
      * @throws Exception if fetching news fails
      */
-    private List<String> fetchNews(String queryParams) throws Exception {
-        List<String> articles = new ArrayList<>();
+    private List<Article> fetchNews(String queryParams) throws Exception {
+        List<Article> articles = new ArrayList<>();
 
         // Construct the API request URL
         String endpoint = API_URL + "?" + queryParams + "&apiKey=" + API_KEY;
@@ -68,11 +69,17 @@ public class ArticalFetcher {
             JSONObject jsonResponse = new JSONObject(response.toString());
             JSONArray articlesArray = jsonResponse.getJSONArray("articles");
 
-            // Extract titles of the articles
+            // Extract details of each article
             for (int i = 0; i < articlesArray.length(); i++) {
-                JSONObject article = articlesArray.getJSONObject(i);
-                String title = article.getString("title");
-                articles.add(title);
+                JSONObject articleJson = articlesArray.getJSONObject(i);
+                String title = articleJson.getString("title");
+                String author = articleJson.optString("author", "Unknown"); // Optional field
+                String content = articleJson.optString("content", "Content not available.");
+                String publishedDate = articleJson.optString("publishedAt", "Unknown");
+
+                // Create an Article object
+                Article article = new Article(title, author, content, publishedDate);
+                articles.add(article);
             }
         } else {
             throw new Exception("Failed to fetch news. HTTP Response Code: " + responseCode);
