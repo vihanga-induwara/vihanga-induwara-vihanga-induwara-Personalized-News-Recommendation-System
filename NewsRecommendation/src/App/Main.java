@@ -233,19 +233,25 @@ public class Main {
                 }
                 System.out.println("======================================");
                 System.out.println("Options:");
-                System.out.println("Enter the number of an article to read the full details.");
-                System.out.println("Enter 0 to go back to the main menu.");
+                System.out.println("[1-N] Enter the number of an article to read the full details.");
+                System.out.println("[0] Return to the main menu.");
+                System.out.println("======================================");
                 System.out.print("Your choice: ");
+
+                if (!scanner.hasNextInt()) {
+                    System.out.println("Invalid input. Please enter a valid number.");
+                    scanner.next(); // Clear invalid input
+                    continue;
+                }
 
                 int choice = scanner.nextInt();
                 scanner.nextLine(); // Clear the buffer
 
                 if (choice == 0) {
-                    System.out.println("Returning to the User Main menu...");
+                    System.out.println("\nReturning to the User Main menu...");
                     displayUserDashboard();
                     break;
                 } else if (choice > 0 && choice <= topNews.size()) {
-                    // Display full article details
                     Article selectedArticle = topNews.get(choice - 1);
                     System.out.println("\n========== Article Details ==========");
                     System.out.println("Title: " + selectedArticle.getTitle());
@@ -256,11 +262,11 @@ public class Main {
                     System.out.println("Press Enter to return to the news list.");
                     scanner.nextLine();
                 } else {
-                    System.out.println("Invalid choice. Please try again.");
+                    System.out.println("Invalid choice. Please select a valid article number.");
                 }
             }
         } catch (Exception e) {
-            System.err.println("Failed to fetch top news: " + e.getMessage());
+            System.err.println("An error occurred while fetching the news: " + e.getMessage());
         }
     }
 
