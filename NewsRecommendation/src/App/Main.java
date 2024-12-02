@@ -286,7 +286,6 @@ public class Main {
         }
     }
 
-
     private void manageNews() {
         System.out.println("Managing news...");
         // Add logic to manage news

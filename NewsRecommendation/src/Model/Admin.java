@@ -1,5 +1,10 @@
 package Model;
 
+import DB.DatabaseHandler;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Scanner;
 
@@ -15,8 +20,8 @@ public class Admin {
         this.adminID = adminID;
         this.username = username;
         this.password = password;
-        this.name = name;
         this.createdAt = createdAt;
+        this.name = name;
     }
 
     // Getter for adminID
@@ -107,8 +112,42 @@ public class Admin {
     // Method to view users (could fetch from database or other data source)
     private void viewUsers() {
         System.out.println("\nViewing users...");
-        // Add logic to retrieve and display all users from the database
+
+        String query = "SELECT * FROM users"; // Query to retrieve all users from the users table
+        DatabaseHandler dbHandler = new DatabaseHandler();
+
+        try {
+            dbHandler.connect(); // Establish the connection to the database
+            Statement stmt = dbHandler.connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query); // Execute the query
+
+            while (rs.next()) {
+                // Retrieving user details from the result set
+                String userId = rs.getString("userId");
+                String username = rs.getString("username");
+                String password = rs.getString("password");
+                String email = rs.getString("email");
+                String name = rs.getString("name");
+
+                // Displaying the user details
+                System.out.println("User ID: " + userId);
+                System.out.println("Username: " + username);
+                System.out.println("Password: " + password); // For security, it's better not to print password
+                System.out.println("Email: " + email);
+                System.out.println("Name: " + name);
+                System.out.println("----------");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error retrieving users: " + e.getMessage());
+        } finally {
+            try {
+                dbHandler.closeConnection(); // Ensure the database connection is closed
+            } catch (SQLException e) {
+                System.err.println("Error closing connection: " + e.getMessage());
+            }
+        }
     }
+
 
     // Method to manage articles (add/edit/delete articles)
     private void manageArticles() {
