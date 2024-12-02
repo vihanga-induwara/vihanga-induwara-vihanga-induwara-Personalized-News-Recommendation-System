@@ -8,8 +8,10 @@ import Service.ArticalFetcher;
 import Service.RecommendationEngine;
 
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 import java.util.Scanner;
 
@@ -148,9 +150,142 @@ public class Main {
     }
 
     private void manageUsers() {
-        System.out.println("Managing users...");
-        // Add logic to manage users
+        DatabaseHandler dbManager = new DatabaseHandler();
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("\n----- Manage Users -----");
+            System.out.println("1. View All Users");
+            System.out.println("2. Add New User");
+            System.out.println("3. Update Existing User");
+            System.out.println("4. Delete User");
+            System.out.println("5. Exit");
+            System.out.print("Enter your choice: ");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+
+            switch (choice) {
+                case 1 -> viewAllUsers(dbManager);
+                case 2 -> addUser(dbManager, scanner);
+                case 3 -> updateUser(dbManager, scanner);
+                case 4 -> deleteUser(dbManager, scanner);
+                case 5 -> {
+                    System.out.println("Exiting user management...");
+                    return;
+                }
+                default -> System.out.println("Invalid choice! Please try again.");
+            }
+        }
     }
+
+    private void viewAllUsers(DatabaseHandler dbManager) {
+        try {
+            dbManager.connect();
+            String query = "SELECT * FROM users";
+            Statement stmt = dbManager.connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+
+            System.out.println("\n----- User List -----");
+            while (rs.next()) {
+                System.out.println("User ID: " + rs.getString("userId"));
+                System.out.println("Username: " + rs.getString("username"));
+                System.out.println("Email: " + rs.getString("email"));
+                System.out.println("Name: " + rs.getString("name"));
+                System.out.println("---------------------");
+            }
+            dbManager.closeConnection();
+        } catch (SQLException e) {
+            System.err.println("Error fetching users: " + e.getMessage());
+        }
+    }
+
+    private void addUser(DatabaseHandler dbManager, Scanner scanner) {
+        System.out.println("Enter Username: ");
+        String username = scanner.nextLine();
+        System.out.println("Enter Password: ");
+        String password = scanner.nextLine();
+        System.out.println("Enter Email: ");
+        String email = scanner.nextLine();
+        System.out.println("Enter Name: ");
+        String name = scanner.nextLine();
+
+        GeneralUser newUser = new GeneralUser(username, password, email, name);
+        try {
+            boolean success = dbManager.saveUserToDB(newUser);
+            if (success) {
+                System.out.println("User added successfully!");
+            } else {
+                System.out.println("Failed to add user.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error adding user: " + e.getMessage());
+        }
+    }
+
+    private void updateUser(DatabaseHandler dbManager, Scanner scanner) {
+        System.out.println("Enter the User ID of the user to update: ");
+        String userId = scanner.nextLine();
+
+        System.out.println("Enter new Username (leave blank to keep unchanged): ");
+        String username = scanner.nextLine();
+        System.out.println("Enter new Password (leave blank to keep unchanged): ");
+        String password = scanner.nextLine();
+        System.out.println("Enter new Email (leave blank to keep unchanged): ");
+        String email = scanner.nextLine();
+        System.out.println("Enter new Name (leave blank to keep unchanged): ");
+        String name = scanner.nextLine();
+
+        try {
+            dbManager.connect();
+            String query = """
+                UPDATE users 
+                SET username = COALESCE(NULLIF(?, ''), username),
+                    password = COALESCE(NULLIF(?, ''), password),
+                    email = COALESCE(NULLIF(?, ''), email),
+                    name = COALESCE(NULLIF(?, ''), name)
+                WHERE userId = ?""";
+            PreparedStatement stmt = dbManager.connection.prepareStatement(query);
+            stmt.setString(1, username);
+            stmt.setString(2, password);
+            stmt.setString(3, email);
+            stmt.setString(4, name);
+            stmt.setString(5, userId);
+
+            int rowsUpdated = stmt.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println("User updated successfully!");
+            } else {
+                System.out.println("User ID not found.");
+            }
+            dbManager.closeConnection();
+        } catch (SQLException e) {
+            System.err.println("Error updating user: " + e.getMessage());
+        }
+    }
+
+    private void deleteUser(DatabaseHandler dbManager, Scanner scanner) {
+        System.out.println("Enter the User ID of the user to delete: ");
+        String userId = scanner.nextLine();
+
+        try {
+            dbManager.connect();
+            String query = "DELETE FROM users WHERE userId = ?";
+            PreparedStatement stmt = dbManager.connection.prepareStatement(query);
+            stmt.setString(1, userId);
+
+            int rowsDeleted = stmt.executeUpdate();
+            if (rowsDeleted > 0) {
+                System.out.println("User deleted successfully!");
+            } else {
+                System.out.println("User ID not found.");
+            }
+            dbManager.closeConnection();
+        } catch (SQLException e) {
+            System.err.println("Error deleting user: " + e.getMessage());
+        }
+    }
+
 
     private void manageNews() {
         System.out.println("Managing news...");
@@ -281,13 +416,53 @@ public class Main {
             if (news.isEmpty()) {
                 System.out.println("No news articles found for the category: " + category);
             } else {
-                System.out.println("News in category '" + category + "':");
-                for (Article article : news) {
-                    System.out.println("- " + article);
+                boolean keepBrowsing = true;
+                while (true) {
+                    System.out.println("\nNews in category '" + category + "':");
+                    for (int i = 0; i < news.size(); i++) {
+                        System.out.println((i + 1) + ". " + news.get(i).getTitle());
+                    }
+
+                    // Prompt user to select an article
+                    System.out.println("\nEnter the number of the article you want to read in full:");
+                    System.out.println("0. Go back to the User Dashboard");
+                    int choice = input.nextInt();
+                    input.nextLine(); // Consume the newline character
+
+                    if (choice == 0) {
+                        // Go back to the user dashboard
+                        displayUserDashboard();
+                        return;
+                    } else if (choice > 0 && choice <= news.size()) {
+                        Article selectedArticle = news.get(choice - 1);
+                        System.out.println("\nFull Article:");
+                        System.out.println("Title: " + selectedArticle.getTitle());
+                        System.out.println("Author: " + selectedArticle.getAuthor());
+                        System.out.println("Date: " + selectedArticle.getPublishedDate());
+                        System.out.println("Content: \n" + selectedArticle.getContent());
+
+                        // Ask the user if they want to continue
+                        System.out.println("\nWhat would you like to do next?");
+                        System.out.println("1. Go back to the news list for this category");
+                        System.out.println("2. Go back to the User Dashboard");
+                        int nextChoice = input.nextInt();
+                        input.nextLine(); // Consume the newline character
+
+                        if (nextChoice == 2) {
+                            // Exit to the user dashboard
+                            displayUserDashboard();
+                            return;
+                        } else if (nextChoice != 1) {
+                            System.out.println("Invalid choice. Returning to the news list.");
+                        }
+                    } else {
+                        System.out.println("Invalid selection. Please try again.");
+                    }
                 }
             }
         } catch (Exception e) {
             System.err.println("Failed to fetch categorical news: " + e.getMessage());
+            displayUserDashboard(); // Ensure fallback to dashboard on error
         }
     }
 
@@ -341,6 +516,10 @@ public class Main {
         } catch (SQLException e) {
             System.err.println("Error retrieving user profile: " + e.getMessage());
         }
+
+        // After viewing profile, go back to the user dashboard
+        System.out.println("\nReturning to User Dashboard...");
+        displayUserDashboard();
     }
 
     private static void handleAdminLogin() {

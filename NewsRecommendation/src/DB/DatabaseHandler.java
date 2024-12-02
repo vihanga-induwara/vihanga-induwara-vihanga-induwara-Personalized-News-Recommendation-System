@@ -9,10 +9,10 @@ public class DatabaseHandler {
     private static final String DB_USER = "root"; // Replace with your database username
     private static final String DB_PASSWORD = ""; // Replace with your database password
 
-    private static Connection connection;
+    public static Connection connection; // Shared connection (static)
 
     // Establish a connection to the database
-    public void connect() throws SQLException {
+    public static void connect() throws SQLException {
         if (connection == null || connection.isClosed()) {
             connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
         }
@@ -68,11 +68,11 @@ public class DatabaseHandler {
         String query = "INSERT INTO users (UserId, Username, password, email, name) VALUES (?, ?, ?, ?, ?)";
         connect();
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setString(1, user.getUserId()); // Make sure to pass the UserId value
+            stmt.setString(1, user.getUserId());
             stmt.setString(2, user.getUsername());
-            stmt.setString(3, user.getPassword()); // Hash the password in production
+            stmt.setString(3, user.getPassword());
             stmt.setString(4, user.getEmail());
-            stmt.setString(5, user.getName()); // Make sure to pass the name value
+            stmt.setString(5, user.getName());
             return stmt.executeUpdate() > 0; // Return true if insert was successful
         } finally {
             closeConnection();
@@ -114,29 +114,25 @@ public class DatabaseHandler {
     // Method to validate admin login
     public static Admin validateAdminLogin(String adminUsername, String adminPassword) {
         String query = "SELECT * FROM Admins WHERE Username = ? AND Password = ?";
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, adminUsername);
-            statement.setString(2, adminPassword);
+        try {
+            connect(); // Ensure the connection is established
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setString(1, adminUsername);
+                statement.setString(2, adminPassword);
 
-            ResultSet resultSet = statement.executeQuery();
+                ResultSet resultSet = statement.executeQuery();
 
-            if (resultSet.next()) {
-                // If an admin with the provided username and password is found, create an Admin object
-                int adminID = resultSet.getInt("AdminID");
-                String username = resultSet.getString("Username");
-                String password = resultSet.getString("Password");
-                Timestamp createdAt = resultSet.getTimestamp("CreatedAt");
-
-                // Corrected constructor based on available fields
-                return new Admin(adminID, username, password, createdAt);
+                if (resultSet.next()) {
+                    int adminID = resultSet.getInt("AdminID");
+                    String username = resultSet.getString("Username");
+                    String password = resultSet.getString("Password");
+                    Timestamp createdAt = resultSet.getTimestamp("CreatedAt");
+                    return new Admin(adminID, username, password, createdAt);
+                }
             }
         } catch (SQLException e) {
             System.err.println("Error during admin login validation: " + e.getMessage());
         }
-
-        // Return null if no matching admin is found
         return null;
     }
-
-
 }

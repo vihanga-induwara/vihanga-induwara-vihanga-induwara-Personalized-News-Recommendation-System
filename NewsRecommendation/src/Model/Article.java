@@ -30,4 +30,10 @@ public class Article {
     public String getPublishedDate() {
         return publishedDate;
     }
+
+    // Override toString() for meaningful output
+    @Override
+    public String toString() {
+        return String.format("Title: %s | Author: %s | Date: %s", title, author, publishedDate);
+    }
 }
