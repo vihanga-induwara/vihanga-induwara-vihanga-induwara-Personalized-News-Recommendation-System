@@ -1,0 +1,57 @@
+CREATE DATABASE IF NOT EXISTS newsapp;
+
+-- Drop tables if they exist (to start fresh)
+DROP TABLE IF EXISTS Preferences;
+DROP TABLE IF EXISTS ReadingHistory;
+DROP TABLE IF EXISTS Articles;
+DROP TABLE IF EXISTS Admins;
+DROP TABLE IF EXISTS Users;
+
+-- Users table
+CREATE TABLE Users (
+    UserID INT AUTO_INCREMENT PRIMARY KEY,
+    Username VARCHAR(255) NOT NULL UNIQUE,
+    Password VARCHAR(255) NOT NULL,
+    Email VARCHAR(255) NOT NULL UNIQUE,
+    Name VARCHAR(255),
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Admins table (related to Users table)
+CREATE TABLE Admins (
+    AdminID INT AUTO_INCREMENT PRIMARY KEY,
+    UserID INT NOT NULL, -- Foreign key referencing Users
+    AdminRole VARCHAR(255) DEFAULT 'Admin',
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE
+);
+
+-- Articles table
+CREATE TABLE Articles (
+    ArticleID INT AUTO_INCREMENT PRIMARY KEY,
+    Title VARCHAR(255) NOT NULL,
+    Content TEXT NOT NULL,
+    AuthorID INT NOT NULL, -- Foreign key referencing Admins
+    PublishedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (AuthorID) REFERENCES Admins(AdminID) ON DELETE CASCADE
+);
+
+-- ReadingHistory table (tracks users' interactions with articles)
+CREATE TABLE ReadingHistory (
+    HistoryID INT AUTO_INCREMENT PRIMARY KEY,
+    UserID INT NOT NULL, -- Foreign key referencing Users
+    ArticleID INT NOT NULL, -- Foreign key referencing Articles
+    Action VARCHAR(50) NOT NULL, -- e.g., 'Read', 'Liked', 'Shared'
+    InteractionTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE,
+    FOREIGN KEY (ArticleID) REFERENCES Articles(ArticleID) ON DELETE CASCADE
+);
+
+-- Preferences table (stores user preferences)
+CREATE TABLE Preferences (
+    PreferenceID INT AUTO_INCREMENT PRIMARY KEY,
+    UserID INT NOT NULL, -- Foreign key referencing Users
+    Category VARCHAR(255) NOT NULL,
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE
+);

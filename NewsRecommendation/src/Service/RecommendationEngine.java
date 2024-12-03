@@ -3,22 +3,19 @@ package Service;
 import java.util.*;
 
 public class RecommendationEngine {
-    // Sample data
-    private final Map<Integer, List<String>> userPreferences; // User ID -> Liked categories
-    private final Map<String, String> newsData; // News ID -> Category
-    private final Map<Integer, List<String>> userReadHistory; // User ID -> List of read news
+    private final Map<String, List<String>> userPreferences;  // Changed from Integer to String (username)
+    private final Map<String, String> newsData;
+    private final Map<String, List<String>> userReadHistory;  // Changed from Integer to String (username)
 
     public RecommendationEngine() {
-        // Initialize sample data
         userPreferences = new HashMap<>();
         newsData = new HashMap<>();
         userReadHistory = new HashMap<>();
 
-        // Sample user preferences
-        userPreferences.put(1, Arrays.asList("Technology", "AI", "Health"));
-        userPreferences.put(2, Arrays.asList("Sports", "Entertainment", "Business"));
+        // Sample data
+        userPreferences.put("john_doe", Arrays.asList("Technology", "AI", "Health"));
+        userPreferences.put("jane_doe", Arrays.asList("Sports", "Business"));
 
-        // Sample news articles
         newsData.put("N1", "Technology");
         newsData.put("N2", "AI");
         newsData.put("N3", "Health");
@@ -26,30 +23,28 @@ public class RecommendationEngine {
         newsData.put("N5", "Business");
         newsData.put("N6", "Entertainment");
 
-        // Sample read history
-        userReadHistory.put(1, Arrays.asList("N1", "N3")); // User 1 has read N1, N3
-        userReadHistory.put(2, Arrays.asList("N4"));       // User 2 has read N4
+        userReadHistory.put("john_doe", Arrays.asList("N1", "N3"));
+        userReadHistory.put("jane_doe", Arrays.asList("N4"));
     }
 
-    public List<String> getRecommendations(int userId) {
+    public List<String> getRecommendations(String username) {
         // Check if user exists
-        if (!userPreferences.containsKey(userId)) {
+        if (!userPreferences.containsKey(username)) {
             return Collections.emptyList();
         }
 
         // Get user preferences
-        List<String> preferences = userPreferences.get(userId);
+        List<String> preferences = userPreferences.get(username);
 
         // Get already read news
-        List<String> readNews = userReadHistory.getOrDefault(userId, Collections.emptyList());
+        List<String> readNews = userReadHistory.getOrDefault(username, Collections.emptyList());
 
-        // Recommend news articles based on preferences
         List<String> recommendations = new ArrayList<>();
         for (Map.Entry<String, String> entry : newsData.entrySet()) {
             String newsId = entry.getKey();
             String category = entry.getValue();
 
-            // Recommend if the category matches preferences and news is unread
+            // Recommend news based on preferences and unread status
             if (preferences.contains(category) && !readNews.contains(newsId)) {
                 recommendations.add(newsId + " (" + category + ")");
             }

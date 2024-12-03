@@ -135,4 +135,36 @@ public class DatabaseHandler {
         }
         return null;
     }
+
+    // Save reading history details
+    public boolean saveReadingHistory(String userId, String articleId, String action, Timestamp interactionTime) throws SQLException {
+        String query = "INSERT INTO reading_history (UserID, ArticleID, Action, InteractionTime) VALUES (?, ?, ?, ?)";
+        connect();
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, userId); // UserID
+            stmt.setString(2, articleId); // ArticleID
+            stmt.setString(3, action); // Action (e.g., 'view', 'like', 'comment')
+            stmt.setTimestamp(4, interactionTime); // InteractionTime (timestamp)
+            return stmt.executeUpdate() > 0; // Return true if insert was successful
+        } finally {
+            closeConnection();
+        }
+    }
+
+    // Retrieve user's reading history
+    public ResultSet getUserReadingHistory(String userId) throws SQLException {
+        String query = """
+            SELECT a.title, r.action, r.interactionTime
+            FROM reading_history r
+            JOIN articles a ON r.ArticleID = a.ArticleID
+            WHERE r.UserID = ?
+            """;
+        connect();
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, userId); // Set userId to fetch their reading history
+            return statement.executeQuery();
+        }
+    }
+
 }
+

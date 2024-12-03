@@ -6,8 +6,6 @@ import Model.Article;
 import Model.GeneralUser;
 import Service.ArticalFetcher;
 import Service.RecommendationEngine;
-
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,8 +17,8 @@ import java.util.Scanner;
 public class Main {
     private static final Scanner input = new Scanner(System.in);
     private final DatabaseHandler dbHandler = new DatabaseHandler(); // Assuming DatabaseHandler handles DB operations
-    private boolean isAdminLoggedIn = false;
     private boolean isUserLoggedIn = false;
+    private GeneralUser loggedInUser;
 
     public static void main(String[] args) {
         Main app = new Main();
@@ -51,9 +49,6 @@ public class Main {
                     break;
                 case 3:
                     handleAdminLogin();
-                    if (isAdminLoggedIn) {
-                        displayAdminDashboard();
-                    }
                     break;
                 case 4:
                     System.out.println("Exiting...");
@@ -105,76 +100,6 @@ public class Main {
 
             if (!isUserLoggedIn) {
                 return; // Exit dashboard if logged out
-            }
-        }
-    }
-
-    private void displayAdminDashboard() {
-        while (true) {
-            System.out.println("\nAdmin Dashboard:");
-            System.out.println("1. Manage Users");
-            System.out.println("2. Manage News");
-            System.out.println("3. View System Logs");
-            System.out.println("4. Back to Main Menu");
-            System.out.println("5. Logout");
-            System.out.print("Choose an option: ");
-
-            int choice = input.nextInt();
-            input.nextLine(); // Clear buffer
-
-            switch (choice) {
-                case 1:
-                    manageUsers();
-                    break;
-                case 2:
-                    manageNews();
-                    break;
-                case 3:
-                    viewSystemLogs();
-                    break;
-                case 4:
-                    return; // Return to Main Menu
-                case 5:
-                    isAdminLoggedIn = false;
-                    System.out.println("Logged out successfully.");
-                    return;
-                default:
-                    System.out.println("Invalid choice. Please try again.");
-                    break;
-            }
-
-            if (!isAdminLoggedIn) {
-                return; // Exit dashboard if logged out
-            }
-        }
-    }
-
-    private void manageUsers() {
-        DatabaseHandler dbManager = new DatabaseHandler();
-        Scanner scanner = new Scanner(System.in);
-
-        while (true) {
-            System.out.println("\n----- Manage Users -----");
-            System.out.println("1. View All Users");
-            System.out.println("2. Add New User");
-            System.out.println("3. Update Existing User");
-            System.out.println("4. Delete User");
-            System.out.println("5. Exit");
-            System.out.print("Enter your choice: ");
-
-            int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
-
-            switch (choice) {
-                case 1 -> viewAllUsers(dbManager);
-                case 2 -> addUser(dbManager, scanner);
-                case 3 -> updateUser(dbManager, scanner);
-                case 4 -> deleteUser(dbManager, scanner);
-                case 5 -> {
-                    System.out.println("Exiting user management...");
-                    return;
-                }
-                default -> System.out.println("Invalid choice! Please try again.");
             }
         }
     }
@@ -286,15 +211,7 @@ public class Main {
         }
     }
 
-    private void manageNews() {
-        System.out.println("Managing news...");
-        // Add logic to manage news
-    }
-
-    private void viewSystemLogs() {
-        System.out.println("Viewing system logs...");
-        // Add logic to display system logs
-    }
+    private String loggedInUsername = null; // Store the logged-in username
 
     private void handleUserLogin() {
         System.out.println("\nUser Login...");
@@ -306,8 +223,9 @@ public class Main {
         try {
             GeneralUser user = dbHandler.validateUserLogin(username, password);
             if (user != null) {
+                loggedInUsername = username; // Store the logged-in username
                 System.out.println("Login successful! Welcome, " + user.getName());
-                displayUserDashboard();
+                displayUserDashboard(); // Display the user dashboard
             } else {
                 System.out.println("Invalid username or password.");
             }
@@ -465,16 +383,25 @@ public class Main {
         }
     }
 
-    private void viewRecommendedNews() {
+    public void viewRecommendedNews() {
+        if (loggedInUsername == null) { // Ensure a user is logged in
+            System.out.println("Error: No user is logged in. Please log in first.");
+            return;
+        }
+
         RecommendationEngine recommendationEngine = new RecommendationEngine();
 
-        // Get recommendations for a specific user (e.g., userId: 1)
-        List<String> recommendedNews = recommendationEngine.getRecommendations(1);
+        // Get recommendations for the user based on their username
+        List<String> recommendedNews = recommendationEngine.getRecommendations(loggedInUsername);
 
         // Display the recommended news
-        System.out.println("Recommended News Articles:");
-        for (String news : recommendedNews) {
-            System.out.println("- " + news);
+        System.out.println("Recommended News Articles for User " + loggedInUsername + ":");
+        if (recommendedNews.isEmpty()) {
+            System.out.println("No recommendations available.");
+        } else {
+            for (String news : recommendedNews) {
+                System.out.println("- " + news);
+            }
         }
     }
 
