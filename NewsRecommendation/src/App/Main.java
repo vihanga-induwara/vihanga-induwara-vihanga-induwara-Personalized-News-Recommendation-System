@@ -6,12 +6,13 @@ import Model.Article;
 import Model.GeneralUser;
 import Service.ArticalFetcher;
 import Service.RecommendationEngine;
-import java.sql.PreparedStatement;
+
+import java.security.Timestamp;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 import java.util.Scanner;
+
 
 
 public class Main {
@@ -104,112 +105,6 @@ public class Main {
         }
     }
 
-    private void viewAllUsers(DatabaseHandler dbManager) {
-        try {
-            dbManager.connect();
-            String query = "SELECT * FROM users";
-            Statement stmt = dbManager.connection.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
-
-            System.out.println("\n----- User List -----");
-            while (rs.next()) {
-                System.out.println("User ID: " + rs.getString("userId"));
-                System.out.println("Username: " + rs.getString("username"));
-                System.out.println("Email: " + rs.getString("email"));
-                System.out.println("Name: " + rs.getString("name"));
-                System.out.println("---------------------");
-            }
-            dbManager.closeConnection();
-        } catch (SQLException e) {
-            System.err.println("Error fetching users: " + e.getMessage());
-        }
-    }
-
-    private void addUser(DatabaseHandler dbManager, Scanner scanner) {
-        System.out.println("Enter Username: ");
-        String username = scanner.nextLine();
-        System.out.println("Enter Password: ");
-        String password = scanner.nextLine();
-        System.out.println("Enter Email: ");
-        String email = scanner.nextLine();
-        System.out.println("Enter Name: ");
-        String name = scanner.nextLine();
-
-        GeneralUser newUser = new GeneralUser(username, password, email, name);
-        try {
-            boolean success = dbManager.saveUserToDB(newUser);
-            if (success) {
-                System.out.println("User added successfully!");
-            } else {
-                System.out.println("Failed to add user.");
-            }
-        } catch (SQLException e) {
-            System.err.println("Error adding user: " + e.getMessage());
-        }
-    }
-
-    private void updateUser(DatabaseHandler dbManager, Scanner scanner) {
-        System.out.println("Enter the User ID of the user to update: ");
-        String userId = scanner.nextLine();
-
-        System.out.println("Enter new Username (leave blank to keep unchanged): ");
-        String username = scanner.nextLine();
-        System.out.println("Enter new Password (leave blank to keep unchanged): ");
-        String password = scanner.nextLine();
-        System.out.println("Enter new Email (leave blank to keep unchanged): ");
-        String email = scanner.nextLine();
-        System.out.println("Enter new Name (leave blank to keep unchanged): ");
-        String name = scanner.nextLine();
-
-        try {
-            dbManager.connect();
-            String query = """
-                UPDATE users 
-                SET username = COALESCE(NULLIF(?, ''), username),
-                    password = COALESCE(NULLIF(?, ''), password),
-                    email = COALESCE(NULLIF(?, ''), email),
-                    name = COALESCE(NULLIF(?, ''), name)
-                WHERE userId = ?""";
-            PreparedStatement stmt = dbManager.connection.prepareStatement(query);
-            stmt.setString(1, username);
-            stmt.setString(2, password);
-            stmt.setString(3, email);
-            stmt.setString(4, name);
-            stmt.setString(5, userId);
-
-            int rowsUpdated = stmt.executeUpdate();
-            if (rowsUpdated > 0) {
-                System.out.println("User updated successfully!");
-            } else {
-                System.out.println("User ID not found.");
-            }
-            dbManager.closeConnection();
-        } catch (SQLException e) {
-            System.err.println("Error updating user: " + e.getMessage());
-        }
-    }
-
-    private void deleteUser(DatabaseHandler dbManager, Scanner scanner) {
-        System.out.println("Enter the User ID of the user to delete: ");
-        String userId = scanner.nextLine();
-
-        try {
-            dbManager.connect();
-            String query = "DELETE FROM users WHERE userId = ?";
-            PreparedStatement stmt = dbManager.connection.prepareStatement(query);
-            stmt.setString(1, userId);
-
-            int rowsDeleted = stmt.executeUpdate();
-            if (rowsDeleted > 0) {
-                System.out.println("User deleted successfully!");
-            } else {
-                System.out.println("User ID not found.");
-            }
-            dbManager.closeConnection();
-        } catch (SQLException e) {
-            System.err.println("Error deleting user: " + e.getMessage());
-        }
-    }
 
     private String loggedInUsername = null; // Store the logged-in username
 
@@ -276,22 +171,25 @@ public class Main {
 
         try {
             // Fetch today's top news
-            List<Article> topNews = fetcher.fetchTopNews(); // Fetch Article objects
+            List<Article> topNews = fetcher.fetchTopNews();
 
             while (true) {
-                System.out.println("\n========== Today's Top News ==========");
+                // Displaying the top news list
+                System.out.println("\n" + "=".repeat(40));
+                System.out.println("🌟 Today's Top News 🌟");
+                System.out.println("=".repeat(40));
                 for (int i = 0; i < topNews.size(); i++) {
-                    System.out.println((i + 1) + ". " + topNews.get(i).getTitle());
+                    System.out.printf("%2d. %s\n", (i + 1), topNews.get(i).getTitle());
                 }
-                System.out.println("======================================");
+                System.out.println("=".repeat(40));
                 System.out.println("Options:");
-                System.out.println("[1-N] Enter the number of an article to read the full details.");
+                System.out.println("[1-N] Select an article to read.");
                 System.out.println("[0] Return to the main menu.");
-                System.out.println("======================================");
                 System.out.print("Your choice: ");
 
+                // Validating user input
                 if (!scanner.hasNextInt()) {
-                    System.out.println("Invalid input. Please enter a valid number.");
+                    System.out.println("❌ Invalid input. Please enter a number.");
                     scanner.next(); // Clear invalid input
                     continue;
                 }
@@ -299,29 +197,33 @@ public class Main {
                 int choice = scanner.nextInt();
                 scanner.nextLine(); // Clear the buffer
 
+                // Handling user choice
                 if (choice == 0) {
-                    System.out.println("\nReturning to the User Main menu...");
+                    System.out.println("Returning to the main menu...");
                     displayUserDashboard();
                     break;
                 } else if (choice > 0 && choice <= topNews.size()) {
                     Article selectedArticle = topNews.get(choice - 1);
-                    System.out.println("\n========== Article Details ==========");
-                    System.out.println("Title: " + selectedArticle.getTitle());
-                    System.out.println("Author: " + selectedArticle.getAuthor());
-                    System.out.println("Published Date: " + selectedArticle.getPublishedDate());
-                    System.out.println("\nContent:\n" + selectedArticle.getContent());
-                    System.out.println("======================================");
+                    System.out.println("\n" + "=".repeat(40));
+                    System.out.println("📰 Article Details 📰");
+                    System.out.println("=".repeat(40));
+                    System.out.printf("Title: %s\n", selectedArticle.getTitle());
+                    System.out.printf("Author: %s\n", selectedArticle.getAuthor() != null ? selectedArticle.getAuthor() : "Unknown");
+                    System.out.printf("Published Date: %s\n", selectedArticle.getPublishedDate() != null ? selectedArticle.getPublishedDate() : "Unknown");
+                    System.out.println("-".repeat(40));
+                    System.out.println(selectedArticle.getContent());
+                    System.out.println("=".repeat(40));
                     System.out.println("Press Enter to return to the news list.");
-                    scanner.nextLine();
+                    scanner.nextLine(); // Wait for user input
                 } else {
-                    System.out.println("Invalid choice. Please select a valid article number.");
+                    System.out.println("❌ Invalid choice. Please select a valid article number.");
                 }
             }
         } catch (Exception e) {
-            System.err.println("An error occurred while fetching the news: " + e.getMessage());
+            System.err.println("⚠️ Error fetching the news: " + e.getMessage());
         }
     }
-
+    
     private void viewCategoricalNews() {
         ArticalFetcher fetcher = new ArticalFetcher();
         System.out.print("Enter a category (e.g., business, entertainment, health, science, sports, technology): ");
