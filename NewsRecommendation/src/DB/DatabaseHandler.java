@@ -7,9 +7,9 @@ import java.sql.*;
 import java.util.List;
 
 public class DatabaseHandler {
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/newsapp"; // Update with your database name
-    private static final String DB_USER = "root"; // Replace with your database username
-    private static final String DB_PASSWORD = ""; // Replace with your database password
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/newsapp"; // database name
+    private static final String DB_USER = "root"; // database username
+    private static final String DB_PASSWORD = ""; // database password
 
     public static Connection connection; // Shared connection (static)
 
@@ -290,26 +290,5 @@ public class DatabaseHandler {
         // Connection is not closed here, will be closed after all operations
     }
 
-    // DatabaseHandler - Save articles to database (modifying the flow to keep the connection open)
-    private void saveArticlesToDatabase(List<Article> articles) {
-        try {
-            connect();  // Ensure connection is established before looping through the articles
-
-            for (Article article : articles) {
-                if (!articleExists(article.getTitle())) { // Avoid duplicate entries
-                    saveArticle(article);
-                }
-            }
-        } catch (SQLException e) {
-            System.err.println("Error saving articles to the database: " + e.getMessage());
-        } finally {
-            // Close the connection after all operations
-            try {
-                closeConnection();
-            } catch (SQLException e) {
-                System.err.println("Error closing connection: " + e.getMessage());
-            }
-        }
-    }
 
 }
