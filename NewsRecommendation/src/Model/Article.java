@@ -39,9 +39,12 @@ public class Article {
         return String.format("Title: %s | Author: %s | Date: %s", title, author, publishedDate);
     }
 
-
+    // Change return type to String
     public String getId() {
         counter++; // Increment the counter for every new ID
         return String.format("%s-%04d", PREFIX, counter); // Format the ID with the prefix and zero-padded counter
     }
+
+
+
 }

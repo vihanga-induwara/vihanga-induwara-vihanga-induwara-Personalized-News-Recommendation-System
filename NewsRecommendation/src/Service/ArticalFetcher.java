@@ -1,49 +1,60 @@
 package Service;
 
+import DB.DatabaseHandler;
 import Model.Article;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import java.util.Scanner;
+import java.util.List;
+import java.util.ArrayList;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
+/**
+ * Service class for fetching articles from an API.
+ */
 public class ArticalFetcher {
     private static final String API_URL = "https://newsapi.org/v2/top-headlines";
     private static final String API_KEY = "1a5a2bbf4f4f4fd8a9a92a98f25c9515"; // Replace with your actual API key
+    private final DatabaseHandler dbHandler;
 
     /**
-     * Fetch top news articles.
+     * Constructor initializes the database handler.
+     */
+    public ArticalFetcher() {
+        dbHandler = new DatabaseHandler();
+    }
+
+    /**
+     * Fetch top news articles and save them to the database.
      *
      * @return List of Article objects
      * @throws Exception if fetching news fails
      */
     public List<Article> fetchTopNews() throws Exception {
-        return fetchNews("country=us");
+        return fetchAndSaveNews("country=us");
     }
 
     /**
-     * Fetch news articles by category.
+     * Fetch news articles by category and save them to the database.
      *
      * @param category the category to filter news
      * @return List of Article objects
      * @throws Exception if fetching news fails
      */
     public List<Article> fetchNewsByCategory(String category) throws Exception {
-        return fetchNews("category=" + category + "&country=us");
+        return fetchAndSaveNews("category=" + category + "&country=us");
     }
 
     /**
-     * Generic method to fetch news based on query parameters.
+     * Fetch news based on query parameters and save the articles to the database.
      *
      * @param queryParams the query parameters for the API call
      * @return List of Article objects
      * @throws Exception if fetching news fails
      */
-    private List<Article> fetchNews(String queryParams) throws Exception {
+    private List<Article> fetchAndSaveNews(String queryParams) throws Exception {
         List<Article> articles = new ArrayList<>();
 
         // Construct the API request URL
@@ -73,7 +84,7 @@ public class ArticalFetcher {
             for (int i = 0; i < articlesArray.length(); i++) {
                 JSONObject articleJson = articlesArray.getJSONObject(i);
                 String title = articleJson.getString("title");
-                String author = articleJson.optString("author", "Unknown"); // Optional field
+                String author = articleJson.optString("author", "Unknown");
                 String content = articleJson.optString("content", "Content not available.");
                 String publishedDate = articleJson.optString("publishedAt", "Unknown");
 
@@ -81,10 +92,30 @@ public class ArticalFetcher {
                 Article article = new Article(title, author, content, publishedDate);
                 articles.add(article);
             }
+
+            // Save fetched articles to the database
+            saveArticlesToDatabase(articles);
         } else {
             throw new Exception("Failed to fetch news. HTTP Response Code: " + responseCode);
         }
 
         return articles;
+    }
+
+    /**
+     * Save a list of articles to the database.
+     *
+     * @param articles the list of articles to save
+     */
+    private void saveArticlesToDatabase(List<Article> articles) {
+        try {
+            for (Article article : articles) {
+                if (!dbHandler.articleExists(article.getTitle())) { // Avoid duplicate entries
+                    dbHandler.saveArticle(article);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error saving articles to the database: " + e.getMessage());
+        }
     }
 }

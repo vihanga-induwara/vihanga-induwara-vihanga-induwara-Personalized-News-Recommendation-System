@@ -1,57 +1,270 @@
-CREATE DATABASE IF NOT EXISTS newsapp;
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Host: 127.0.0.1
+-- Generation Time: Dec 04, 2024 at 08:11 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
--- Drop tables if they exist (to start fresh)
-DROP TABLE IF EXISTS Preferences;
-DROP TABLE IF EXISTS ReadingHistory;
-DROP TABLE IF EXISTS Articles;
-DROP TABLE IF EXISTS Admins;
-DROP TABLE IF EXISTS Users;
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
 
--- Users table
-CREATE TABLE Users (
-    UserID INT AUTO_INCREMENT PRIMARY KEY,
-    Username VARCHAR(255) NOT NULL UNIQUE,
-    Password VARCHAR(255) NOT NULL,
-    Email VARCHAR(255) NOT NULL UNIQUE,
-    Name VARCHAR(255),
-    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
 
--- Admins table (related to Users table)
-CREATE TABLE Admins (
-    AdminID INT AUTO_INCREMENT PRIMARY KEY,
-    UserID INT NOT NULL, -- Foreign key referencing Users
-    AdminRole VARCHAR(255) DEFAULT 'Admin',
-    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE
-);
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
 
--- Articles table
-CREATE TABLE Articles (
-    ArticleID INT AUTO_INCREMENT PRIMARY KEY,
-    Title VARCHAR(255) NOT NULL,
-    Content TEXT NOT NULL,
-    AuthorID INT NOT NULL, -- Foreign key referencing Admins
-    PublishedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (AuthorID) REFERENCES Admins(AdminID) ON DELETE CASCADE
-);
+--
+-- Database: `newsapp`
+--
 
--- ReadingHistory table (tracks users' interactions with articles)
-CREATE TABLE ReadingHistory (
-    HistoryID INT AUTO_INCREMENT PRIMARY KEY,
-    UserID INT NOT NULL, -- Foreign key referencing Users
-    ArticleID INT NOT NULL, -- Foreign key referencing Articles
-    Action VARCHAR(50) NOT NULL, -- e.g., 'Read', 'Liked', 'Shared'
-    InteractionTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE,
-    FOREIGN KEY (ArticleID) REFERENCES Articles(ArticleID) ON DELETE CASCADE
-);
+-- --------------------------------------------------------
 
--- Preferences table (stores user preferences)
-CREATE TABLE Preferences (
-    PreferenceID INT AUTO_INCREMENT PRIMARY KEY,
-    UserID INT NOT NULL, -- Foreign key referencing Users
-    Category VARCHAR(255) NOT NULL,
-    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE
-);
+--
+-- Table structure for table `admins`
+--
+
+CREATE TABLE `admins` (
+  `AdminID` int(11) NOT NULL,
+  `Username` varchar(255) NOT NULL,
+  `Password` varchar(255) NOT NULL,
+  `CreatedAt` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `admins`
+--
+
+INSERT INTO `admins` (`AdminID`, `Username`, `Password`, `CreatedAt`) VALUES
+(1, 'admin', 'admin', '2024-12-04 19:09:39');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `articles`
+--
+
+CREATE TABLE `articles` (
+  `ArticleID` int(11) NOT NULL,
+  `Title` varchar(255) NOT NULL,
+  `Content` text NOT NULL,
+  `Author` varchar(255) NOT NULL,
+  `PublishedDate` varchar(255) DEFAULT NULL,
+  `Category` enum('business','entertainment','health','science','sports','technology','more') NOT NULL,
+  `created_at` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `articles`
+--
+
+INSERT INTO `articles` (`ArticleID`, `Title`, `Content`, `Author`, `PublishedDate`, `Category`, `created_at`) VALUES
+(1, 'Breaking News', 'This is breaking news content.', 'Admin1', '2024-12-04 19:53:18', 'business', '2024-12-04 22:32:55'),
+(2, 'Tech Trends', 'Latest trends in technology.', 'Admin2', '2024-12-04 19:53:18', 'technology', '2024-12-04 22:32:55'),
+(3, 'South Korea president declares emergency martial law - CNN', 'Content not available.', 'CNN', '2024-12-03T14:17:00Z', 'business', '2024-12-04 22:32:55'),
+(4, 'Al-Shaair suspended 3 games for Lawrence hit - ESPN', 'The NFL suspended Houston Texans linebacker Azeez Al-Shaair three games for repeated violations of player safety rules after his hit to the head of Jacksonville Jaguars quarterback Trevor Lawrence on… [+3645 chars]', 'Unknown', '2024-12-03T14:16:00Z', 'business', '2024-12-04 22:32:55'),
+(5, 'The 100 Best Songs of 2024 - Rolling Stone', 'If you were hoping for the pop madness of 2024 to slow down and start making sense: good luck, babe! Because there has never, ever, been a pop year like the hot-not-pretty mess that was 2024. Week to… [+32468 chars]', 'Rolling Stone', '2024-12-03T14:06:54Z', 'business', '2024-12-04 22:32:55'),
+(6, 'Intel announces $249 Arc B580 and $219 Arc B570 ‘Battlemage’ graphics cards - The Verge', 'Intel announces $249 Arc B580 and $219 Arc B570 Battlemage graphics cards\r\nIntel announces $249 Arc B580 and $219 Arc B570 Battlemage graphics cards\r\n / Battlemage will make its desktop debut.\r\nBySea… [+4124 chars]', 'Sean Hollister', '2024-12-03T14:00:00Z', 'business', '2024-12-04 22:32:55'),
+(7, 'Don’t Miss December’s Night Sky Spectacle: Venus Shines, Jupiter Glows, Meteors Fly! - SciTechDaily', 'This month, take in breathtaking views of Venus shining as the “Evening Star,” Jupiter glowing at its brightest during opposition, and Mars doubling in brightness. Don’t miss the Winter Triangle ligh… [+6170 chars]', 'Unknown', '2024-12-03T13:45:30Z', 'business', '2024-12-04 22:32:55'),
+(8, '[Removed]', '[Removed]', 'Unknown', '2024-12-03T13:30:26Z', 'business', '2024-12-04 22:32:55'),
+(9, 'Vazquez, 3-time boxing world champ, dies at 46 - ESPN', 'Israel Vazquez, Mexico\'s three-time junior featherweight world champion, has died after a battle with cancer, WBC president Mauricio Sulaiman said Tuesday. He was 46.\r\nKnown for his punching power an… [+728 chars]', 'Unknown', '2024-12-03T13:25:00Z', 'business', '2024-12-04 22:32:55'),
+(10, 'Husband of missing Manassas Park woman Mamta Kafle Bhatt charged with murder - WTOP', 'This page contains a video which is being blocked by your ad blocker.In order to view the video you must disable your ad blocker.\r\nHusband of missing Manassas Park woman Mamta Kafle Bhatt charged wit… [+4736 chars]', 'Will Vitka', '2024-12-03T12:55:03Z', 'business', '2024-12-04 22:32:55'),
+(11, 'Israel strikes and Hezbollah mortar fire strain Lebanon ceasefire - BBC.com', 'Israeli soldiers on patrol in northern Israel, near the border with Lebanon\r\nDeadly Israeli air strikes and a mortar attack by Hezbollah have raised fears that the ceasefire in Lebanon could collapse… [+6014 chars]', 'Unknown', '2024-12-03T11:48:12Z', 'business', '2024-12-04 22:32:55'),
+(12, 'Biden just gave Trump a new pardon playbook - POLITICO', 'Content not available.', 'POLITICO', '2024-12-03T10:00:00Z', 'business', '2024-12-04 22:32:55'),
+(13, 'Denver Broncos’ two interception TDs spoil record-setting night for Cleveland Browns - CNN', 'The Denver Broncos defense scored two interception touchdowns to defeat the Browns 41-32 on Monday to spoil a record-setting night for Clevelands Jameis Winston and Jerry Jeudy.\r\nWinston passed for a… [+2768 chars]', 'Homero De la Fuente', '2024-12-03T09:33:00Z', 'business', '2024-12-04 22:32:55'),
+(14, 'Syrian forces regroup with help from Iran, Russia after shock rebel advance - The Washington Post', 'Russia launched airstrikes in support of the Syrian army Monday in an effort to stanch a major rebel advance that surprised and overwhelmed the forces of Syrian President Bashar al-Assad late last we… [+396 chars]', 'Susannah George', '2024-12-03T05:07:29Z', 'business', '2024-12-04 22:32:55'),
+(15, '2024 Gotham Awards: ‘A Different Man’ Wins Best Feature as ‘Nickel Boys,’ ‘Sing Sing’ Each Take Two - Hollywood Reporter', 'A Different Manwon best feature at the 2024 Gotham Awards, while Nickel Boys and Sing Singeach won two awards at the star-studded ceremony at New York’s Cipriani Wall Street on Monday night.\r\nA Diffe… [+12115 chars]', 'Hilary Lewis, Kirsten Chuba', '2024-12-03T04:39:31Z', 'business', '2024-12-04 22:32:55'),
+(16, 'Galaxy Z Flip 7, Fold 7 will finally get upgrades you always wanted - SamMobile - Samsung news', 'Samsung is still the biggest foldable smartphone brand globally, but it is losing its sheen. Chinese rivals are launching foldable phones with better specifications, thinner form factors, and lower p… [+1578 chars]', 'SamMobile, Asif Iqbal Shaik', '2024-12-03T04:04:00Z', 'business', '2024-12-04 22:32:55'),
+(17, 'US woman admits drink-driving in crash that killed bride on wedding day - BBC.com', 'A US woman has pleaded guilty to drink-driving charges over an incident in which she killed a newlywed bride who was travelling in a golf cart on her wedding night.\r\nJamie Lee Komoroski was sentenced… [+1979 chars]', 'Unknown', '2024-12-03T03:28:06Z', 'business', '2024-12-04 22:32:55'),
+(18, 'Trump says he’ll attend Notre Dame Cathedral reopening celebration in Paris this weekend - The Associated Press', 'NEW YORK (AP) President-elect Donald Trump will attend the reopening celebration for Notre Dame Cathedral in Paris this weekend, his first foreign trip since the election.\r\nThe cathedral is set to re… [+5551 chars]', 'JILL COLVIN', '2024-12-03T02:27:00Z', 'business', '2024-12-04 22:32:55'),
+(19, '49ers’ Christian McCaffrey out rest of the season, Jordan Mason might be headed to IR - San Francisco Chronicle', 'Christian McCaffrey, who missed the first eight games of the season because of an injury, will miss the 49ers\' final five contests after suffering knee injury Sunday night against the Bills. \r\nPatric… [+5216 chars]', 'Eric Branch', '2024-12-03T02:08:50Z', 'business', '2024-12-04 22:32:55'),
+(20, 'Delaware judge reaffirms ruling that invalidated massive Tesla pay package for Elon Musk - The Associated Press', 'DOVER, Del. (AP) A Delaware judge has reaffirmed her ruling that Tesla must revoke Elon Musks multibillion-dollar pay package\r\nChancellor Kathaleen St. Jude McCormick on Monday denied a request by at… [+3418 chars]', 'RANDALL CHASE', '2024-12-03T01:28:00Z', 'business', '2024-12-04 22:32:55'),
+(21, 'Hawaii woman Hannah Kobayashi spotted entering Mexico - police - BBC.com', 'A woman from Hawaii who was reported missing in Los Angeles by her family last month was last seen by US authorities safely crossing the southern US border into Mexico, the Los Angeles Police Departm… [+2186 chars]', 'Unknown', '2024-12-03T01:26:34Z', 'business', '2024-12-04 22:32:55'),
+(22, 'Best Cyber Monday phone deals LIVE: iPhone 16, Samsung Galaxy S24, Pixel 9 biggest sales now - Tom\'s Guide', '2024-12-03T16:10:10.348ZiPhone 13 and a year\'s worth of unlimited data for $395\r\n(Image credit: Tom\'s Guide)\r\nI love deals that combine the hardware and service cost into one! For the holiday season,… [+23695 chars]', 'John Velasco', '2024-12-03T16:10:09Z', 'business', '2024-12-04 22:32:55'),
+(23, 'South Korean stocks rocked in U.S. trading after martial law declared - CNBC', 'The ETF is on pace for its fifth straight negative day with unusually heavy trading volume. Nearly 27 million shares have changed hands so far Tuesday, more than eight times its 30-day average volume… [+1311 chars]', 'Yun Li, Hakyung Kim', '2024-12-03T15:38:51Z', 'business', '2024-12-04 22:32:55'),
+(24, 'New website shows you how much Google AI can learn from your photos - Ars Technica', 'Software engineer Vishnu Mohandas decided he would quit Google in more ways than one when he learned that the tech giant had briefly helped the US military develop AI to study drone footage. In 2020 … [+3180 chars]', 'Paresh Dave', '2024-12-03T15:16:02Z', 'business', '2024-12-04 22:32:55'),
+(25, 'Missing Hawaiian woman crossed freely into Mexico, Los Angeles police say - ABC News', 'Content not available.', 'ABC News', '2024-12-03T15:08:50Z', 'business', '2024-12-04 22:32:55'),
+(26, 'Futures Mixed Ahead Of Jobs Data - Investor\'s Business Daily', 'The Dow Jones Industrial Average and other major indexes Tuesday traded mixed as Wall Street reacted to the morning\'s employment data. Tesla (TSLA) was an early loser after a Delaware judge rejected … [+5618 chars]', 'SCOTT LEHTONEN, Investor\'s Business Daily', '2024-12-03T15:03:00Z', 'business', '2024-12-04 22:32:55'),
+(27, 'Democratic lieutenant governors are ‘the most diverse’ group of politicians. Are they the party’s future? - POLITICO', 'In an interview, Davis did not rule out the DLGA getting involved in the partys primary contest in next years off-year elections in Virginia, an open seat they want to flip, if it means weeding out c… [+3188 chars]', 'Brakkton Booker', '2024-12-03T15:00:00Z', 'business', '2024-12-04 22:32:55'),
+(28, 'Ken Martin, in DNC bid, calls for ‘massive narrative and branding project’ for Democrats - POLITICO', 'Several other Democrats, including Rahm Emanuel, the U.S. ambassador to Japan, Michigan state Sen. Mallory McMorrow, former Rep. Max Rose (D-N.Y.) and Democratic strategist Chuck Rocha are all also c… [+2292 chars]', 'Elena Schneider', '2024-12-03T14:46:00Z', 'business', '2024-12-04 22:32:55'),
+(29, 'McMillian\'s pick-6 helps Broncos spoil career nights by Winston and Jeudy and beat Browns 41-32 - The Associated Press', 'DENVER (AP) Jameis Winston had a night to remember and one to forget.\r\nJaQuan McMillian returned an interception 44 yards for a game-sealing touchdown with 1:48 remaining, and Denver spoiled career-b… [+4968 chars]', 'PAT GRAHAM', '2024-12-03T14:42:00Z', 'business', '2024-12-04 22:32:55'),
+(30, 'Dane County judge strikes down Act 10, restoring public employee union bargaining rights - Wisconsin Public Radio News', 'Public employee collective bargaining rights have been restored by a Dane County judge, who ruled that several sections of Wisconsin’s controversial law known as Act 10 are unconstitutional.\r\nIn a fi… [+4863 chars]', 'Rich Kremer', '2024-12-03T14:19:20Z', 'business', '2024-12-04 22:32:55'),
+(31, 'Texans\' Azeez Al-Shaair suspended three games by NFL for hit on Trevor Lawrence - CBS Sports', 'The NFL has announced a three-game suspension for Houston Texans linebacker Azeez Al-Shaair for repeated violations of rules intended to protect the health and safety of players and promote sportsman… [+4530 chars]', '', '2024-12-03T14:14:44Z', 'business', '2024-12-04 22:32:55'),
+(32, 'PFT’s Week 14 2024 NFL power rankings - NBC Sports', '1. Lions (last week No. 1; 11-1): The injuries are piling up. Will it derail their Super Bowl run?\r\n2. Bills (No. 2; 10-2): If the Raiders hadnt blown their chance to beat the Chiefs, the Bills would… [+2660 chars]', 'Mike Florio', '2024-12-03T14:11:03Z', 'business', '2024-12-04 22:32:55'),
+(33, 'China hits back at U.S. with export ban on rare minerals - Axios', 'China announced Tuesday that it was banning the export of certain rare minerals to the U.S. that have military and technological applications.\r\nWhy it matters: The move is seemingly a tit-for-tat res… [+2161 chars]', 'Ivana Saric', '2024-12-03T14:03:26Z', 'business', '2024-12-04 22:32:55'),
+(34, 'Fox News ignores Pete Hegseth misconduct allegations as concerns over Trump pick mount - CNN', 'Whats a media outlet supposed to do when its longtime host is picked to run the Pentagon, and then a series of eyebrow-raising news stories trigger doubts about his appointment?\r\nIf youre Fox News, e… [+5233 chars]', 'Brian Stelter', '2024-12-03T13:37:00Z', 'business', '2024-12-04 22:32:55'),
+(35, 'Massive, \'potentially hazardous\' asteroid due to make closest-ever approach to Earth tonight — and you can watch it live - Livescience.com', 'A \"potentially hazardous\" asteroid the size of a football stadium will zoom past our planet in the early hours tomorrow morning (Dec. 4) — and you can watch it live.\r\nThe gigantic space rock, which i… [+2257 chars]', 'Pandora Dewan', '2024-12-03T13:18:09Z', 'business', '2024-12-04 22:32:55'),
+(36, 'Children can have arthritis, and these Utah teens want to spread the word - KSL.com', 'SALT LAKE CITY In Utah, close to 30,000 people under the age of 18 have been diagnosed with arthritis. Candace Rond is mother to two of them.\r\nWhen her children were younger and suffering with intens… [+4037 chars]', 'Ivy Farguheson, KSL.com', '2024-12-03T13:23:16Z', 'business', '2024-12-05 00:35:13'),
+(37, 'I got malaria on purpose and so can you - Vox.com', 'March 26, 2024, was a weird day for me because it was the only one in my life where I was actively trying to get bitten by mosquitos.\r\nI had volunteered to be exposed to malaria as part of a study at… [+24768 chars]', 'Dylan Matthews', '2024-12-03T12:30:00Z', 'business', '2024-12-05 00:35:13'),
+(38, 'Raw milk producer optimistic after being shut down for bird flu detection - Ars Technica', 'Content not available.', 'Beth Mole', '2024-12-03T12:15:53Z', 'business', '2024-12-05 00:35:13'),
+(39, 'Scientists Discover Simple Supplement That Causes Prostate Cancer Cells To Self-Destruct - Good News Network', 'Credit: Netherlands Cancer Institute\r\nVitamin K is found in leafy greens and is crucial for blood coagulation and calcium synthesis in tissuesbut may also cure prostate cancer.\r\nNot vitamin K specifi… [+2140 chars]', 'Andy Corbley', '2024-12-03T12:00:41Z', 'business', '2024-12-05 00:35:13'),
+(40, 'Parkinson\'s Link to Gut Bacteria Suggests an Unexpected, Simple Treatment - ScienceAlert', 'Researchers have suspected for some time that the link between our gut and brain plays a role in the development of Parkinson\'s disease.\r\nA recent study identified gut microbes likely to be involved … [+3801 chars]', 'Tessa Koumoundouros', '2024-12-03T11:01:28Z', 'business', '2024-12-05 00:35:13'),
+(41, 'There’s an effective treatment for menopause symptoms. Why do so few women use it? - STAT', 'At the annual meeting of the Menopause Society earlier this fall, researchers presented new evidence that hormone therapy can be beneficial to menopausal womens heart health, reducing insulin resista… [+6961 chars]', 'Theresa Gaffney', '2024-12-03T09:33:24Z', 'business', '2024-12-05 00:35:13'),
+(42, 'Whooping cough cases continue to rise in Missouri - KSDK.com', 'ST. LOUIS COUNTY, Mo. St. Louis area pediatricians are continuing to see more cases of whooping cough.\r\nAccording to Missouri Department of Health and Senior Services data, 603 cases of pertussis, al… [+2165 chars]', 'Laura Barczewski', '2024-12-03T04:34:37Z', 'business', '2024-12-05 00:35:13'),
+(43, 'Should Pleasanton birdwatchers take down their feeders to avoid avian flu? - The Mercury News', 'DEAR JOAN: There has been a lot in the media recently about humans catching bird flu. I am concerned about the possible risks to us from feeding birds in our yard.\r\nWe have two feeders – a seed feede… [+2989 chars]', 'Joan Morris, Correspondent', '2024-12-02T23:25:29Z', 'business', '2024-12-05 00:35:13'),
+(44, 'Violence Exposure and Firearms Linked to Teen Suicide Risks - Neuroscience News', 'Summary: A study of U.S. high school students reveals a strong link between suicidal behavior, externalizing behaviors (such as physical violence), and exposure to violence. Adolescents with a histor… [+6580 chars]', 'Neuroscience News', '2024-12-02T22:20:50Z', 'business', '2024-12-05 00:35:13'),
+(45, 'Six Plant-Based Compounds Show Neuroprotective Potential - Neuroscience News', 'Summary: Researchers identified specific plant compounds that provide antioxidant and neuroprotective effects, contributing to brain health beyond basic nutrition. By analyzing plant-based foods like… [+6658 chars]', 'Neuroscience News', '2024-12-02T21:25:56Z', 'business', '2024-12-05 00:35:13'),
+(46, '3 patients hospitalized in Calif. die of \'severe\' tickborne illness, CDC says - SFGATE', 'FILE: A close-up view of a male brown dog tick (Rhipicephalus sanguineus) on a leaf.\r\nCDC via Getty Images\r\nThree people hospitalized in California died from Rocky Mountain spotted fever, a severe ti… [+2456 chars]', 'Ariana Bindman', '2024-12-02T21:22:24Z', 'business', '2024-12-05 00:35:13'),
+(47, 'CU Anschutz researchers launch “moonshot” to cure blindness through eye transplants - The Denver Post', 'As part of a national “moonshot” to cure blindness, researchers at the CU Anschutz Medical Campus will receive as much as $46 million in federal funding over the next five years to pursue a first-of-… [+5566 chars]', 'Seth Klamann', '2024-12-02T21:16:52Z', 'business', '2024-12-05 00:35:13'),
+(48, 'Adolescent binge drinking: Long-term effects on brain structure and function - PsyPost', 'Alcohol is deeply rooted in our cultures and habits, and in most Western countries, its significant economic weight grants it a much more favourable legal status and social perception than other drug… [+5206 chars]', 'Samuel Suarez Suarez and Jose Manuel Perez Garcia', '2024-12-02T21:03:57Z', 'business', '2024-12-05 00:35:13'),
+(49, 'Personal Gut Environments Shape How We Digest, Absorb Food - Neuroscience News', 'Summary: Individual differences in gut physiology and environment play a major role in shaping our gut microbiome and how we process food. Using a smart capsule to measure pH, temperature, and pressu… [+7727 chars]', 'Neuroscience News', '2024-12-02T20:26:19Z', 'business', '2024-12-05 00:35:13'),
+(50, 'No, soy doesn\'t cause cancer: Researchers dispel persistent myth in new study - National Post', 'A new study supports the safety of soy foods, finding that eating them \'had no effect on key markers of estrogen-related cancers\'\r\n Get the latest from Laura Brehaut straight to your inbox Sign Up\r\nA… [+6770 chars]', 'Laura Brehaut', '2024-12-02T20:25:00Z', 'business', '2024-12-05 00:35:13');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `preferences`
+--
+
+CREATE TABLE `preferences` (
+  `PreferenceID` int(11) NOT NULL,
+  `Username` varchar(255) NOT NULL,
+  `Category` enum('business','entertainment','health','science','sports','technology','more') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `reading_history`
+--
+
+CREATE TABLE `reading_history` (
+  `HistoryID` int(11) NOT NULL,
+  `Username` varchar(255) NOT NULL,
+  `ArticleID` int(11) NOT NULL,
+  `Action` varchar(255) NOT NULL,
+  `InteractionTime` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `reading_history`
+--
+
+INSERT INTO `reading_history` (`HistoryID`, `Username`, `ArticleID`, `Action`, `InteractionTime`) VALUES
+(1, 'john_doe', 1, 'view', '2024-12-04 03:34:38'),
+(2, 'jane_doe', 2, 'like', '2024-12-04 03:34:38'),
+(3, 'indu', 8, 'read', '2024-12-04 19:04:50'),
+(4, 'indu', 8, 'skip', '2024-12-04 19:04:58'),
+(5, 'indu', 37, 'skip', '2024-12-04 19:05:20'),
+(6, 'indu', 37, 'skip', '2024-12-04 19:05:31');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE `users` (
+  `UserID` int(11) NOT NULL,
+  `Username` varchar(255) NOT NULL,
+  `Password` varchar(255) NOT NULL,
+  `Name` varchar(255) NOT NULL,
+  `Email` varchar(255) NOT NULL,
+  `CreatedAt` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`UserID`, `Username`, `Password`, `Name`, `Email`, `CreatedAt`) VALUES
+(3, 'indu', '0000', 'vihnga induwara', 'vihnga@gmail.com', '2024-12-04 14:24:52'),
+(2, 'jane_doe', 'password456', 'Jane Doe', 'jane.doe@example.com', '2024-12-04 14:23:18'),
+(1, 'john_doe', 'password123', 'John Doe', 'john.doe@example.com', '2024-12-04 14:23:18');
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `admins`
+--
+ALTER TABLE `admins`
+  ADD PRIMARY KEY (`AdminID`);
+
+--
+-- Indexes for table `articles`
+--
+ALTER TABLE `articles`
+  ADD PRIMARY KEY (`ArticleID`);
+
+--
+-- Indexes for table `preferences`
+--
+ALTER TABLE `preferences`
+  ADD PRIMARY KEY (`PreferenceID`),
+  ADD KEY `Username` (`Username`);
+
+--
+-- Indexes for table `reading_history`
+--
+ALTER TABLE `reading_history`
+  ADD PRIMARY KEY (`HistoryID`),
+  ADD KEY `ArticleID` (`ArticleID`),
+  ADD KEY `idx_user_article` (`Username`,`ArticleID`);
+
+--
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`Username`),
+  ADD UNIQUE KEY `UserID` (`UserID`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `admins`
+--
+ALTER TABLE `admins`
+  MODIFY `AdminID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `articles`
+--
+ALTER TABLE `articles`
+  MODIFY `ArticleID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+
+--
+-- AUTO_INCREMENT for table `preferences`
+--
+ALTER TABLE `preferences`
+  MODIFY `PreferenceID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `reading_history`
+--
+ALTER TABLE `reading_history`
+  MODIFY `HistoryID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+  MODIFY `UserID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `preferences`
+--
+ALTER TABLE `preferences`
+  ADD CONSTRAINT `preferences_ibfk_1` FOREIGN KEY (`Username`) REFERENCES `users` (`Username`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `reading_history`
+--
+ALTER TABLE `reading_history`
+  ADD CONSTRAINT `reading_history_ibfk_1` FOREIGN KEY (`Username`) REFERENCES `users` (`Username`) ON DELETE CASCADE,
+  ADD CONSTRAINT `reading_history_ibfk_2` FOREIGN KEY (`ArticleID`) REFERENCES `articles` (`ArticleID`) ON DELETE CASCADE;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

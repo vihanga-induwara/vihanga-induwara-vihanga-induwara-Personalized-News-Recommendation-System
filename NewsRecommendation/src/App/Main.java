@@ -105,7 +105,6 @@ public class Main {
         }
     }
 
-
     private String loggedInUsername = null; // Store the logged-in username
 
     private void handleUserLogin() {
@@ -213,6 +212,28 @@ public class Main {
                     System.out.println("-".repeat(40));
                     System.out.println(selectedArticle.getContent());
                     System.out.println("=".repeat(40));
+
+                    // Ask user for their action: Read or Skip
+                    System.out.println("Would you like to:");
+                    System.out.println("[1] Read this article.");
+                    System.out.println("[2] Skip this article.");
+                    System.out.print("Your choice: ");
+                    int actionChoice = scanner.nextInt();
+                    scanner.nextLine(); // Clear the buffer
+
+                    // Record the user's action
+                    String action = actionChoice == 1 ? "read" : "skip";
+                    dbHandler.recordUserAction(
+                            loggedInUsername,
+                            selectedArticle.getTitle(),
+                            selectedArticle.getContent(),
+                            selectedArticle.getAuthor() != null ? selectedArticle.getAuthor() : "Unknown",
+                            selectedArticle.getPublishedDate() != null ? selectedArticle.getPublishedDate() : "Unknown",
+                            action
+                    );
+
+
+                    System.out.println("Action recorded: " + action);
                     System.out.println("Press Enter to return to the news list.");
                     scanner.nextLine(); // Wait for user input
                 } else {
@@ -223,7 +244,7 @@ public class Main {
             System.err.println("⚠️ Error fetching the news: " + e.getMessage());
         }
     }
-    
+
     private void viewCategoricalNews() {
         ArticalFetcher fetcher = new ArticalFetcher();
         System.out.print("Enter a category (e.g., business, entertainment, health, science, sports, technology): ");
@@ -260,7 +281,27 @@ public class Main {
                         System.out.println("Date: " + selectedArticle.getPublishedDate());
                         System.out.println("Content: \n" + selectedArticle.getContent());
 
-                        // Ask the user if they want to continue
+                        // Ask user for their action: Read or Skip
+                        System.out.println("\nWould you like to:");
+                        System.out.println("[1] Read this article.");
+                        System.out.println("[2] Skip this article.");
+                        System.out.print("Your choice: ");
+                        int actionChoice = input.nextInt();
+                        input.nextLine(); // Consume the newline character
+
+                        // Record the user's action
+                        String action = actionChoice == 1 ? "read" : "skip";
+                        dbHandler.recordUserAction(
+                                loggedInUsername,
+                                selectedArticle.getTitle(),
+                                selectedArticle.getContent(),
+                                selectedArticle.getAuthor() != null ? selectedArticle.getAuthor() : "Unknown",
+                                selectedArticle.getPublishedDate() != null ? selectedArticle.getPublishedDate() : "Unknown",
+                                action
+                        );
+
+
+                        System.out.println("Action recorded: " + action);
                         System.out.println("\nWhat would you like to do next?");
                         System.out.println("1. Go back to the news list for this category");
                         System.out.println("2. Go back to the User Dashboard");
@@ -291,19 +332,54 @@ public class Main {
             return;
         }
 
-        RecommendationEngine recommendationEngine = new RecommendationEngine();
+        try {
+            DatabaseHandler dbHandler = new DatabaseHandler();
+            // Retrieve the user's preferred category from the database
+            String preferredCategory = dbHandler.getUserPreferredCategory(loggedInUsername);
 
-        // Get recommendations for the user based on their username
-        List<String> recommendedNews = recommendationEngine.getRecommendations(loggedInUsername);
-
-        // Display the recommended news
-        System.out.println("Recommended News Articles for User " + loggedInUsername + ":");
-        if (recommendedNews.isEmpty()) {
-            System.out.println("No recommendations available.");
-        } else {
-            for (String news : recommendedNews) {
-                System.out.println("- " + news);
+            if (preferredCategory == null || preferredCategory.isEmpty()) {
+                System.out.println("No preferred category found for the user. Please update your preferences.");
+                return;
             }
+
+            ArticalFetcher fetcher = new ArticalFetcher();
+            // Fetch 5 articles from the user's preferred category
+            List<Article> articles = fetcher.fetchNewsByCategory(preferredCategory);
+
+            if (articles.isEmpty()) {
+                System.out.println("No articles found in your preferred category: " + preferredCategory);
+                return;
+            }
+
+            System.out.println("\nRecommended News Articles in '" + preferredCategory + "' for User " + loggedInUsername + ":");
+            for (int i = 0; i < Math.min(5, articles.size()); i++) {
+                System.out.println((i + 1) + ". " + articles.get(i).getTitle());
+            }
+
+            // Allow the user to choose an article to read
+            System.out.println("\nEnter the number of the article you want to read in full:");
+            System.out.println("0. Go back to the User Dashboard");
+            int choice = input.nextInt();
+            input.nextLine(); // Consume the newline character
+
+            if (choice == 0) {
+                // Go back to the user dashboard
+                displayUserDashboard();
+                return;
+            } else if (choice > 0 && choice <= Math.min(5, articles.size())) {
+                Article selectedArticle = articles.get(choice - 1);
+                System.out.println("\nFull Article:");
+                System.out.println("Title: " + selectedArticle.getTitle());
+                System.out.println("Author: " + selectedArticle.getAuthor());
+                System.out.println("Date: " + selectedArticle.getPublishedDate());
+                System.out.println("Content: \n" + selectedArticle.getContent());
+            } else {
+                System.out.println("Invalid selection. Returning to the User Dashboard.");
+                displayUserDashboard();
+            }
+        } catch (Exception e) {
+            System.err.println("Error while retrieving recommended news: " + e.getMessage());
+            displayUserDashboard(); // Ensure fallback to dashboard on error
         }
     }
 
@@ -319,35 +395,40 @@ public class Main {
             ResultSet userResult = dbManager.getUserProfile(username);
             if (userResult.next()) {
                 System.out.println("----- User Profile -----");
-                System.out.println("Username: " + userResult.getString("Username"));
-                System.out.println("Email: " + userResult.getString("Email"));
-                System.out.println("Account Created At: " + userResult.getString("CreatedAt"));
+                System.out.println("Username: " + userResult.getString("username")); // Match database column name
+                System.out.println("Email: " + userResult.getString("email"));
+                System.out.println("Account Created At: " + userResult.getString("createdAt")); // Match case
 
                 // Query preferences
-                ResultSet preferencesResult = dbManager.getUserPreferences(userResult.getInt("UserID"));
+                ResultSet preferencesResult = dbManager.getUserPreferences(username);
                 System.out.println("\nPreferences:");
+                if (!preferencesResult.isBeforeFirst()) {
+                    System.out.println("- No preferences set.");
+                }
                 while (preferencesResult.next()) {
-                    System.out.println("- " + preferencesResult.getString("Category"));
+                    System.out.println("- " + preferencesResult.getString("category"));
                 }
 
                 // Query reading history
-                ResultSet historyResult = dbManager.getUserReadingHistory(userResult.getInt("UserID"));
+                ResultSet historyResult = dbManager.getUserReadingHistory(String.valueOf(userResult.getInt("userId"))); // Match database column
                 System.out.println("\nReading History:");
+                if (!historyResult.isBeforeFirst()) {
+                    System.out.println("- No reading history available.");
+                }
                 while (historyResult.next()) {
-                    System.out.println("- Article: " + historyResult.getString("Title"));
-                    System.out.println("  Action: " + historyResult.getString("Action"));
-                    System.out.println("  Interaction Time: " + historyResult.getString("InteractionTime"));
+                    System.out.println("- Article: " + historyResult.getString("title"));
+                    System.out.println("  Action: " + historyResult.getString("action"));
+                    System.out.println("  Interaction Time: " + historyResult.getString("interactionTime"));
                 }
             } else {
                 System.out.println("User not found!");
             }
         } catch (SQLException e) {
             System.err.println("Error retrieving user profile: " + e.getMessage());
+        } finally {
+            System.out.println("\nReturning to User Dashboard...");
+            displayUserDashboard();
         }
-
-        // After viewing profile, go back to the user dashboard
-        System.out.println("\nReturning to User Dashboard...");
-        displayUserDashboard();
     }
 
     private static void handleAdminLogin() {

@@ -1,8 +1,10 @@
 package DB;
 
 import Model.Admin;
+import Model.Article;
 import Model.GeneralUser;
 import java.sql.*;
+import java.util.List;
 
 public class DatabaseHandler {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/newsapp"; // Update with your database name
@@ -18,10 +20,36 @@ public class DatabaseHandler {
         }
     }
 
+    // Method to validate admin login
+    public static Admin validateAdminLogin(String adminUsername, String adminPassword) {
+        String query = "SELECT * FROM Admins WHERE Username = ? AND Password = ?";
+        try {
+            connect(); // Ensure the connection is established
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setString(1, adminUsername);
+                statement.setString(2, adminPassword);
+
+                ResultSet resultSet = statement.executeQuery();
+
+                if (resultSet.next()) {
+                    int adminID = resultSet.getInt("AdminID");
+                    String username = resultSet.getString("Username");
+                    String password = resultSet.getString("Password");
+                    Timestamp createdAt = resultSet.getTimestamp("CreatedAt");
+                    return new Admin(adminID, username, password, createdAt);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error during admin login validation: " + e.getMessage());
+        }
+        return null;
+    }
+
+
     // Close the database connection
     public void closeConnection() throws SQLException {
-        if (connection != null && !connection.isClosed()) {
-            connection.close();
+        if (connection == null || connection.isClosed()) {
+            connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
         }
     }
 
@@ -31,7 +59,7 @@ public class DatabaseHandler {
         connect();
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, username);
-            stmt.setString(2, password); // Use hashed passwords in production
+            stmt.setString(2, password);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
@@ -65,7 +93,7 @@ public class DatabaseHandler {
 
     // Save a user to the database
     public boolean saveUserToDB(GeneralUser user) throws SQLException {
-        String query = "INSERT INTO users (UserId, Username, password, email, name) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO users (UserId, Username, Password, Email, Name) VALUES (?, ?, ?, ?, ?)";
         connect();
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, user.getUserId());
@@ -73,7 +101,7 @@ public class DatabaseHandler {
             stmt.setString(3, user.getPassword());
             stmt.setString(4, user.getEmail());
             stmt.setString(5, user.getName());
-            return stmt.executeUpdate() > 0; // Return true if insert was successful
+            return stmt.executeUpdate() > 0;
         } finally {
             closeConnection();
         }
@@ -88,52 +116,13 @@ public class DatabaseHandler {
         return statement.executeQuery();
     }
 
-    // Retrieve user preferences by user ID
-    public ResultSet getUserPreferences(int userId) throws SQLException {
-        String query = "SELECT category FROM preferences WHERE userId = ?";
+    // Retrieve user preferences by username
+    public ResultSet getUserPreferences(String username) throws SQLException {
+        String query = "SELECT category FROM preferences WHERE username = ?";
         connect();
         PreparedStatement statement = connection.prepareStatement(query);
-        statement.setInt(1, userId);
+        statement.setString(1, username);
         return statement.executeQuery();
-    }
-
-    // Retrieve user reading history
-    public ResultSet getUserReadingHistory(int userId) throws SQLException {
-        String query = """
-                SELECT a.title, r.action, r.interactionTime
-                FROM reading_history r
-                JOIN articles a ON r.articleId = a.articleId
-                WHERE r.userId = ?
-                """;
-        connect();
-        PreparedStatement statement = connection.prepareStatement(query);
-        statement.setInt(1, userId);
-        return statement.executeQuery();
-    }
-
-    // Method to validate admin login
-    public static Admin validateAdminLogin(String adminUsername, String adminPassword) {
-        String query = "SELECT * FROM Admins WHERE Username = ? AND Password = ?";
-        try {
-            connect(); // Ensure the connection is established
-            try (PreparedStatement statement = connection.prepareStatement(query)) {
-                statement.setString(1, adminUsername);
-                statement.setString(2, adminPassword);
-
-                ResultSet resultSet = statement.executeQuery();
-
-                if (resultSet.next()) {
-                    int adminID = resultSet.getInt("AdminID");
-                    String username = resultSet.getString("Username");
-                    String password = resultSet.getString("Password");
-                    Timestamp createdAt = resultSet.getTimestamp("CreatedAt");
-                    return new Admin(adminID, username, password, createdAt);
-                }
-            }
-        } catch (SQLException e) {
-            System.err.println("Error during admin login validation: " + e.getMessage());
-        }
-        return null;
     }
 
     // Save reading history details
@@ -141,32 +130,186 @@ public class DatabaseHandler {
         String query = "INSERT INTO reading_history (UserID, ArticleID, Action, InteractionTime) VALUES (?, ?, ?, ?)";
         connect();
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setString(1, userId); // UserID
-            stmt.setString(2, articleId); // ArticleID
-            stmt.setString(3, action); // Action (e.g., 'view', 'like', 'comment')
-            stmt.setTimestamp(4, interactionTime); // InteractionTime (timestamp)
-            return stmt.executeUpdate() > 0; // Return true if insert was successful
+            stmt.setString(1, userId);
+            stmt.setString(2, articleId);
+            stmt.setString(3, action);
+            stmt.setTimestamp(4, interactionTime);
+            return stmt.executeUpdate() > 0;
         } finally {
             closeConnection();
         }
     }
 
     // Retrieve user's reading history
-    public ResultSet getUserReadingHistory(String userId) throws SQLException {
+    public ResultSet getUserReadingHistory(String username) throws SQLException {
         String query = """
             SELECT a.title, r.action, r.interactionTime
             FROM reading_history r
-            JOIN articles a ON r.ArticleID = a.ArticleID
-            WHERE r.UserID = ?
+            JOIN articles a ON r.articleId = a.articleId
+            WHERE r.username = ?
             """;
         connect();
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, userId); // Set userId to fetch their reading history
-            return statement.executeQuery();
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setString(1, username);
+        return statement.executeQuery();
+    }
+
+    // Retrieve user preferred category
+    public String getUserPreferredCategory(String loggedInUsername) {
+        String query = """
+            SELECT category FROM preferences p
+            JOIN users u ON p.username = u.username
+            WHERE u.username = ?
+        """;
+        try {
+            connect();
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setString(1, loggedInUsername);
+                ResultSet rs = stmt.executeQuery();
+
+                if (rs.next()) {
+                    return rs.getString("category");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching preferred category: " + e.getMessage());
+        } finally {
+            try {
+                closeConnection();
+            } catch (SQLException e) {
+                System.err.println("Error closing database connection: " + e.getMessage());
+            }
+        }
+        return null;
+    }
+
+    // Method to save an article to the database
+    public boolean saveArticleToDB(String title, String author, String content, String publishedDate) throws SQLException {
+        connect();
+        String checkQuery = "SELECT COUNT(*) FROM articles WHERE title = ?";
+        String insertQuery = "INSERT INTO articles (Title, Author, Content, PublishedDate) VALUES (?, ?, ?, ?)";
+
+        try (PreparedStatement checkStmt = connection.prepareStatement(checkQuery)) {
+            checkStmt.setString(1, title);
+            ResultSet rs = checkStmt.executeQuery();
+            if (rs.next() && rs.getInt(1) > 0) {
+                return false; // Article already exists
+            }
+        }
+
+        try (PreparedStatement insertStmt = connection.prepareStatement(insertQuery)) {
+            insertStmt.setString(1, title);
+            insertStmt.setString(2, author);
+            insertStmt.setString(3, content);
+            insertStmt.setString(4, publishedDate);
+            return insertStmt.executeUpdate() > 0;
+        } finally {
+            closeConnection();
         }
     }
 
+    public void recordUserAction(String username, String articleTitle, String articleContent, String articleAuthor, String publishedDate, String action) throws SQLException {
+        connect(); // Establish database connection
 
+        // SQL queries for finding existing articles, inserting new articles, and recording user actions
+        String findArticleQuery = "SELECT ArticleID FROM articles WHERE title = ?";
+        String insertArticleQuery = "INSERT INTO articles (Title, Content, Author, PublishedDate, created_at) VALUES (?, ?, ?, ?, NOW())";
+        String insertHistoryQuery = "INSERT INTO reading_history (username, articleId, action, interactionTime) VALUES (?, ?, ?, NOW())";
+
+        try {
+            // Check if the article exists in the database
+            String articleId = null;
+            try (PreparedStatement findStmt = connection.prepareStatement(findArticleQuery)) {
+                findStmt.setString(1, articleTitle); // Set the article title as the parameter
+                ResultSet rs = findStmt.executeQuery();
+
+                if (rs.next()) {
+                    // If the article exists, get its ID
+                    articleId = rs.getString("ArticleID");
+                } else {
+                    // If the article doesn't exist, insert a new article into the database
+                    try (PreparedStatement insertArticleStmt = connection.prepareStatement(insertArticleQuery, Statement.RETURN_GENERATED_KEYS)) {
+                        insertArticleStmt.setString(1, articleTitle);      // Set the article title
+                        insertArticleStmt.setString(2, articleContent);    // Set the article content
+                        insertArticleStmt.setString(3, articleAuthor);     // Set the article author
+                        insertArticleStmt.setString(4, publishedDate);     // Set the article published date
+                        insertArticleStmt.executeUpdate();
+
+                        // Get the generated article ID after insertion
+                        ResultSet generatedKeys = insertArticleStmt.getGeneratedKeys();
+                        if (generatedKeys.next()) {
+                            articleId = generatedKeys.getString(1);
+                        } else {
+                            throw new SQLException("Failed to insert new article, no ID obtained.");
+                        }
+                    }
+                }
+            }
+
+            // Record the user's action on the article (read or skip)
+            try (PreparedStatement insertStmt = connection.prepareStatement(insertHistoryQuery)) {
+                insertStmt.setString(1, username);    // Set the username
+                insertStmt.setString(2, articleId);   // Set the article ID
+                insertStmt.setString(3, action);      // Set the action (read or skip)
+                insertStmt.executeUpdate();
+            }
+        } finally {
+            closeConnection(); // Ensure the database connection is closed
+        }
+    }
+
+    public boolean articleExists(String title) throws SQLException {
+        String query = "SELECT COUNT(*) FROM articles WHERE title = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, title);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next() && rs.getInt(1) > 0;
+        }
+    }
+
+    // DatabaseHandler - Save article method
+    public void saveArticle(Article article) {
+        String query = "INSERT INTO articles (title, author, content, publishedDate) VALUES (?, ?, ?, ?)";
+        try {
+            connect();  // Ensure connection is established before the operation
+
+            // Prepare and execute the statement
+            try (PreparedStatement stmt = connection.prepareStatement(query)) {
+                stmt.setString(1, article.getTitle());
+                stmt.setString(2, article.getAuthor());
+                stmt.setString(3, article.getContent());
+                stmt.setString(4, article.getPublishedDate());
+                stmt.executeUpdate();
+                System.out.println("Article saved successfully.");
+            } catch (SQLException e) {
+                System.err.println("Error during the article save process: " + e.getMessage());
+            }
+        } catch (SQLException e) {
+            System.err.println("Error establishing the connection: " + e.getMessage());
+        }
+        // Connection is not closed here, will be closed after all operations
+    }
+
+    // DatabaseHandler - Save articles to database (modifying the flow to keep the connection open)
+    private void saveArticlesToDatabase(List<Article> articles) {
+        try {
+            connect();  // Ensure connection is established before looping through the articles
+
+            for (Article article : articles) {
+                if (!articleExists(article.getTitle())) { // Avoid duplicate entries
+                    saveArticle(article);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error saving articles to the database: " + e.getMessage());
+        } finally {
+            // Close the connection after all operations
+            try {
+                closeConnection();
+            } catch (SQLException e) {
+                System.err.println("Error closing connection: " + e.getMessage());
+            }
+        }
+    }
 
 }
-
