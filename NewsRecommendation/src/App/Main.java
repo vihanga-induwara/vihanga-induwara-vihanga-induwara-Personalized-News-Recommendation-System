@@ -669,38 +669,47 @@ public class Main {
 
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
     private static void handleAdminLogin() {
-        System.out.println("\nAdmin Login...");
-        System.out.print("Enter admin username: ");
+        System.out.println("\n🔒 Admin Login");
+        System.out.println("=".repeat(40));
+
+        // Prompt for admin credentials
+        System.out.print("👤 Enter Admin Username: ");
         String adminUsername = input.nextLine();
-        System.out.print("Enter admin password: ");
+        System.out.print("🔑 Enter Admin Password: ");
         String adminPassword = input.nextLine();
 
         try {
-            // Validate the admin credentials using DBHandler
+            // Validate the admin credentials using the DatabaseHandler
             Admin admin = DatabaseHandler.validateAdminLogin(adminUsername, adminPassword);
+
             if (admin != null) {
-                System.out.println("Admin login successful! Welcome, " + admin.getName());
-                // Admin-specific functionality is moved to Admin class
-                admin.adminMenu(input); // Passing input for menu handling
+                // Successful login message
+                System.out.println("\n✅ Admin login successful! Welcome, " + admin.getName() + " 🎉");
+                System.out.println("-".repeat(40));
+
+                // Redirect to the admin menu
+                admin.adminMenu(input); // Passing input for handling admin-specific actions
             } else {
-                System.out.println("Invalid admin username or password.");
+                // Invalid credentials message
+                System.out.println("\n❌ Invalid admin username or password. Please try again.");
             }
+        } catch (NullPointerException npe) {
+            // Handle null pointer exceptions (e.g., admin object being null)
+            System.out.println("\n⚠️ Unexpected Error: Admin credentials might be missing or incomplete.");
+            System.err.println("📜 Details: " + npe.getMessage());
+        } catch (InputMismatchException ime) {
+            // Handle invalid input types
+            System.out.println("\n❌ Input Error: Please provide valid username and password values.");
+            input.nextLine(); // Clear the invalid input buffer
         } catch (Exception e) {
-            System.out.println("Error occurred while logging in as admin: " + e.getMessage());
+            // Catch all other exceptions
+            System.out.println("\n⚠️ An unexpected error occurred during admin login.");
+            System.err.println("📜 Details: " + e.getMessage());
+        } finally {
+            // Always show this message regardless of success or failure
+            System.out.println("\n🔙 Returning to Main Menu...");
+            System.out.println("=".repeat(40));
         }
     }
 
