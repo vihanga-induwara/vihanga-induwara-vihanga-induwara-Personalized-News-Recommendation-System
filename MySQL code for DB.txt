@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 04, 2024 at 08:11 PM
+-- Generation Time: Dec 05, 2024 at 02:27 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -111,7 +111,59 @@ INSERT INTO `articles` (`ArticleID`, `Title`, `Content`, `Author`, `PublishedDat
 (47, 'CU Anschutz researchers launch “moonshot” to cure blindness through eye transplants - The Denver Post', 'As part of a national “moonshot” to cure blindness, researchers at the CU Anschutz Medical Campus will receive as much as $46 million in federal funding over the next five years to pursue a first-of-… [+5566 chars]', 'Seth Klamann', '2024-12-02T21:16:52Z', 'business', '2024-12-05 00:35:13'),
 (48, 'Adolescent binge drinking: Long-term effects on brain structure and function - PsyPost', 'Alcohol is deeply rooted in our cultures and habits, and in most Western countries, its significant economic weight grants it a much more favourable legal status and social perception than other drug… [+5206 chars]', 'Samuel Suarez Suarez and Jose Manuel Perez Garcia', '2024-12-02T21:03:57Z', 'business', '2024-12-05 00:35:13'),
 (49, 'Personal Gut Environments Shape How We Digest, Absorb Food - Neuroscience News', 'Summary: Individual differences in gut physiology and environment play a major role in shaping our gut microbiome and how we process food. Using a smart capsule to measure pH, temperature, and pressu… [+7727 chars]', 'Neuroscience News', '2024-12-02T20:26:19Z', 'business', '2024-12-05 00:35:13'),
-(50, 'No, soy doesn\'t cause cancer: Researchers dispel persistent myth in new study - National Post', 'A new study supports the safety of soy foods, finding that eating them \'had no effect on key markers of estrogen-related cancers\'\r\n Get the latest from Laura Brehaut straight to your inbox Sign Up\r\nA… [+6770 chars]', 'Laura Brehaut', '2024-12-02T20:25:00Z', 'business', '2024-12-05 00:35:13');
+(50, 'No, soy doesn\'t cause cancer: Researchers dispel persistent myth in new study - National Post', 'A new study supports the safety of soy foods, finding that eating them \'had no effect on key markers of estrogen-related cancers\'\r\n Get the latest from Laura Brehaut straight to your inbox Sign Up\r\nA… [+6770 chars]', 'Laura Brehaut', '2024-12-02T20:25:00Z', 'business', '2024-12-05 00:35:13'),
+(51, 'Column | Kash Patel has an enemies list centered on grievance - The Washington Post', 'Next week, Cassidy Hutchinson will turn 28. The New Jersey native graduated from Christopher Newport University in Virginia five years ago. She interned briefly on Capitol Hill before taking a job at… [+129 chars]', 'Philip Bump', '2024-12-03T20:34:15Z', 'business', '2024-12-05 01:20:12'),
+(52, 'CDC issues major update about McDonald’s E. coli outbreak - New York Post ', 'A lethal E. coli outbreak linked to slivered onions served on McDonalds Quarter Pounder burgers has ended, the Centers for Disease Control and Prevention said on Tuesday.\r\nThe bacteria strain linked … [+3872 chars]', 'Taylor Herzlich', '2024-12-03T17:59:00Z', 'business', '2024-12-05 01:20:12'),
+(53, 'South Korea’s Yoon says he will drop martial law order - Financial Times', 'Get complete digital access\r\n$75 per month\r\nComplete digital access to quality FT journalism with expert analysis from industry leaders. Pay a year upfront and save 20%.', 'Christian Davies', '2024-12-03T20:03:56Z', 'business', '2024-12-05 01:20:12'),
+(54, 'Republicans map out ambitious — and challenging — 2025 agenda - Semafor', 'Republicans plan aligns with how Democrats treated their full control of Washington in 2021 and how the GOP behaved in 2017 under the same conditions. But this time, Trumps party hopes for quicker su… [+2467 chars]', 'Burgess Everett', '2024-12-03T18:37:00Z', 'business', '2024-12-05 01:20:12'),
+(55, 'Minnetonka-based Cargill to lay off about 8,000 people, 5% of global workforce - Star Tribune', 'Cargill is cutting 5% of its global workforce about 8,000 jobs as the commodities giant grapples with the comedown from a few record-breaking years during the pandemic.\r\nThe nations largest privately… [+1616 chars]', 'Brooks Johnson, Brooks Johnson', '2024-12-03T16:41:15Z', 'business', '2024-12-05 01:20:12'),
+(56, 'Cease-Fire Between Israel, Hezbollah Teeters as Sides Exchange Fire - The Wall Street Journal', 'Content not available.', 'The Wall Street Journal', '2024-12-03T17:13:00Z', 'business', '2024-12-05 01:20:12'),
+(57, 'Trump vows to block Japanese steelmaker from buying US Steel, pledges tax incentives and tariffs - The Associated Press', 'HARRISBURG, Pa. (AP) President-elect Donald Trump is underscoring his intention to block the purchase of U.S. Steel by Japanese steelmaker Nippon Steel Corp., and hes pledging to use tax incentives a… [+4545 chars]', 'MARC LEVY, JOSH BOAK', '2024-12-03T17:15:00Z', 'business', '2024-12-05 01:20:12'),
+(58, 'James Webb Space Telescope smashes its own record to find the earliest galaxies that ever existed - Livescience.com', 'The James Webb Space Telescope\r\n (JWST) has discovered a handful of possible galaxies that could be among the earliest to ever exist.\r\nLocated 13.6 billion light-years away and just 200 million years… [+3940 chars]', 'Ben Turner', '2024-12-03T17:46:27Z', 'business', '2024-12-05 01:20:12'),
+(59, 'France’s government looks on the brink of collapse. What’s next? - The Associated Press', 'PARIS (AP) Frances minority government appeared to be in its final hours Tuesday as opposition lawmakers from the left and the far right vowed to topple Prime Minister Michel Barniers Cabinet.\r\nA no-… [+3779 chars]', 'SYLVIE CORBET', '2024-12-03T15:45:00Z', 'business', '2024-12-05 01:20:12'),
+(60, 'NFL Power Rankings, Week 14: Bills and Eagles nipping at injury-riddled Lions heels; Ravens drop - NFL.com', 'Content not available.', 'Unknown', '2024-12-03T16:07:00Z', 'business', '2024-12-05 01:20:12'),
+(61, 'Secret Service fires shots near Janet Yellen\'s home, no one hurt - ABC News', 'Content not available.', 'ABC News', '2024-12-03T16:25:57Z', 'business', '2024-12-05 01:20:12'),
+(62, 'Kendrick Lamar & SZA Announce 2025 Grand National Tour: See the Dates - Billboard', 'Fresh off teaming up for a pair of tracks on Kendrick Lamar’sGNX album, K. Dot and SZA are joining forces for the co-headlining 2025 Grand National Tour. \r\nPresented by Live Nation, pgLang and Top Da… [+2352 chars]', 'Michael Saponara', '2024-12-03T15:33:04Z', 'business', '2024-12-05 01:20:12'),
+(63, 'What to know about the rebel offensive in Syria - Axios', 'A lightning offensive in Syria last week broke a prolonged stalemate 13 years into Syria\'s civil war and emphasized the vulnerability of Syrian President Bashar al-Assad\'s regime.\r\nWhy it matters: Re… [+4365 chars]', 'Ivana Saric', '2024-12-03T15:36:53Z', 'business', '2024-12-05 01:20:12'),
+(64, 'Tiger Woods ‘not tournament sharp yet’ in latest comeback - PGA TOUR', 'Met with media at Hero World Challenge\r\nTiger Woods said he continues to build strength and implied he is playing again. But, he added, he is not yet ready to return to action. \r\nWoods met with the m… [+2430 chars]', 'Cameron Morfit', '2024-12-03T15:41:51Z', 'business', '2024-12-05 01:20:12'),
+(65, 'How a Supreme Court decision on health care bans for transgender youth could impact trans people nationwide - CNN', 'When Tennessee banned gender-affirming care for transgender youth last year, Sarah began taking days off work to drive hundreds of miles from her home in Nashville to a North Carolina clinic that cou… [+11454 chars]', 'Elizabeth Wolfe', '2024-12-03T15:43:00Z', 'business', '2024-12-05 01:20:12'),
+(66, '‘We’re at the next level’: Monster Hunter Wilds’ creators on the secret behind Capcom’s new golden era - Video Games Chronicle', 'On the 2nd floor of Capcoms R&amp;D1 building in Osaka, Japan, were offered only the slightest of glimpses at the secrets inside. Beyond a tour of the buildings motion capture studio (one of three in… [+16978 chars]', 'Andy Robinson', '2024-12-03T15:00:35Z', 'business', '2024-12-05 01:20:12'),
+(67, 'YSL verdicts delivered in court | Here\'s what the jury decided - 11Alive.com WXIA', 'ATLANTA A Fulton County jury followed the YSL RICO case for almost a year exactly to the day, and have now returned a verdict.\r\nOn their fourth day of deliberations Tuesday, the jury determined the f… [+7240 chars]', 'Jonathan Raymond (11Alive)', '2024-12-03T15:17:00Z', 'business', '2024-12-05 01:20:12'),
+(68, 'Watch Will Pete Hegseth Get a Confirmation Hearing? - Bloomberg', 'Content not available.', 'Bloomberg', '2024-12-03T22:22:29Z', 'business', '2024-12-05 03:14:53'),
+(69, 'Exclusive: Intel approaches candidates for CEO role, including former board member Lip-Bu Tan, sources say - Reuters', 'Content not available.', 'Max Cherney, Milana Vinn', '2024-12-03T21:02:32Z', 'business', '2024-12-05 03:14:53'),
+(70, 'Barnier makes last-ditch effort to prevent government collapse - POLITICO Europe', 'After being named prime minister in early September, Barnier said his priority was to bring down France’s budget deficit and get the country’s finances in order. To do so, he proposed a budget with 6… [+1328 chars]', 'Giorgio Leali', '2024-12-03T21:28:00Z', 'business', '2024-12-05 03:14:53'),
+(71, '‘Frozen out’: Trade hawk Lighthizer unlikely to return for Trump’s second term - POLITICO', 'Lighthizer has been a champion of Trump for at least 15 years, and hes been in the background, giving Trump ideas, and putting Trump in the spotlight. And I think he really felt like this was his tur… [+4858 chars]', 'Gavin Bade, Adam Behsudi, Ari Hawkins', '2024-12-03T21:50:31Z', 'business', '2024-12-05 03:14:53'),
+(72, 'Dow Jones Today: Stocks Mixed as Market Looks to Extend Record-Setting Rally; Intel Slides - Investopedia', 'Biggest S&amp;P 500 Movers on Tuesday\r\nAdvancers\r\n<ul><li>Shares of big data analytics software provider Palantir Technologies (PLTR) soared 6.9%, the top performance in the S&amp;P 500 on Tuesday. P… [+11917 chars]', 'Stephen Wisnefski', '2024-12-03T19:01:04Z', 'business', '2024-12-05 03:14:53'),
+(73, 'Elon Musk\'s net worth balloons despite court rejecting Tesla pay package - Axios', 'A Delaware judge\'s ruling rejecting Elon Musk\'s Tesla compensation package for the second time is but a small setback for his finances as his net worth soars in the immediate aftermath of Donald Trum… [+2975 chars]', 'Nathan Bomey', '2024-12-03T22:26:16Z', 'business', '2024-12-05 03:14:53'),
+(74, 'ChatGPT’s search results for news are ‘unpredictable’ and frequently inaccurate - The Verge', 'ChatGPTs search results for news are unpredictable and frequently inaccurate\r\nChatGPTs search results for news are unpredictable and frequently inaccurate\r\n / Researchers say that despite a confident… [+2102 chars]', 'Wes Davis', '2024-12-03T18:25:07Z', 'business', '2024-12-05 03:14:53'),
+(75, 'This Body Type Is Linked to an Increased Risk of Developing Alzheimer\'s - PEOPLE', 'Having more fat around your midsection may make you more likely to develop Alzheimers disease. \r\nA specific type of body fat visceral fat around the midsection has been linked to the abnormal protein… [+2244 chars]', 'https://www.facebook.com/peoplemag', '2024-12-03T19:49:01Z', 'business', '2024-12-05 03:14:53'),
+(76, 'South Korea live: South Korea president backs down from martial law order after MPs vote to block it - BBC.com', 'Max MatzaUS reporter\r\nA statement from the White House has just been released.\r\n\"We are relieved President Yoon has reversed course on his concerning declaration of martial law,\" a White House spokes… [+1115 chars]', 'https://www.facebook.com/bbcnews', '2024-12-03T19:52:30Z', 'business', '2024-12-05 03:14:53'),
+(77, 'Second-to-last college playoff rankings offer last chance to see how nervous teams should be - The Associated Press', 'The next-to-last College Football Playoff rankings come out Tuesday night, serving up one last chance to see who would be in, who would be out, who will be mad and who should be very, very nervous th… [+4529 chars]', 'EDDIE PELLS', '2024-12-03T17:14:00Z', 'business', '2024-12-05 03:14:53'),
+(78, 'Kendrick Lamar and SZA announce 2025 North American stadium tour - The Associated Press', 'NEW YORK (AP) Not Like Us, its like them Kendrick Lamar and SZA will hit the road together in 2025.\r\nOn Tuesday morning, Lamar and SZA announced the Grand National Tour, which will hit 19 stadiums ac… [+926 chars]', 'MARIA SHERMAN', '2024-12-03T20:58:00Z', 'business', '2024-12-05 03:14:53'),
+(79, 'Trump prosecutor Fani Willis dealt major blow after jury acquits 2 defendants in massive YSL trial - New York Post ', 'Donald Trump prosecutor Fani Willis was dealt a massive blow Tuesday after her prosecution of the YSL gang Georgias longest-running trial ended with the acquittals of the last two defendants in the c… [+4648 chars]', 'Priscilla DeGregory', '2024-12-03T16:41:00Z', 'business', '2024-12-05 03:14:53'),
+(80, 'Another round of lake-effect snow is coming to New York, Pennsylvania - The Washington Post', 'Another round of lake-effect snow is on the way Wednesday night into Thursday, with near-blizzard conditions and up to a foot of additional snow for some in the Great Lakes and Northeast regions. The… [+139 chars]', 'Matthew Cappucci', '2024-12-03T17:19:29Z', 'business', '2024-12-05 03:14:53'),
+(81, 'Health officials investigate mystery disease in southwest Congo after 143 deaths - The Associated Press', 'KINSHASA, Congo (AP) A flu-like disease that has killed dozens of people over two weeks is being investigated in southwestern Congo, local authorities said. \r\nThe deaths were recorded between Nov. 10… [+1106 chars]', 'JEAN-YVES KAMALE', '2024-12-03T17:26:00Z', 'business', '2024-12-05 03:14:53'),
+(82, 'Biden in Angola: US president \'proud\' to be there for unprecedented visit - BBC.com', 'US President Joe Biden has said he is very proud to be the first American president visiting Angola at the start of talks with his counterpart João Lourenço.\r\nDiscussions at the presidential palace i… [+1712 chars]', 'Unknown', '2024-12-03T16:11:05Z', 'business', '2024-12-05 03:14:53'),
+(83, 'Trump appears to threaten Hamas with \'all hell to pay\' over hostages - BBC.com', 'US President-elect Donald Trump has issued an apparent warning to Hamas, threatening \"all hell to pay\" if hostages held in Gaza are not released by the time he returns to the White House on 20 Januar… [+4076 chars]', 'Unknown', '2024-12-03T16:27:02Z', 'business', '2024-12-05 03:14:53'),
+(84, 'CDC says McDonald\'s E. coli outbreak is over - CNBC', 'Content not available.', 'CNBC', '2024-12-03T16:30:21Z', 'business', '2024-12-05 03:14:53'),
+(85, 'Tiny asteroid detected hours before hitting Earth to become 4th \'imminent impactor\' of 2024 - Space.com', 'A tiny asteroid was detected on a collision course with Earth today (Dec. 3) and is expected to burn up in Earth\'s atmosphere.\r\nThe asteroid measures around 27 inches (70 centimeters) wide and was de… [+2545 chars]', 'Brett Tingley', '2024-12-03T16:40:26Z', 'business', '2024-12-05 03:14:53'),
+(86, 'Asteroid the size of 2.5 chinchillas impacts over Russia, no damages reported - NASA, ESA - The Jerusalem Post', 'An asteroid approximately the size of two and a half chinchillas impacted the Earth above Siberia, Russia, on Tuesday, according to the European Space Agency (ESA) and NASA.\r\nIncoming!A small asteroi… [+2920 chars]', 'By  AARON REICH', '2024-12-03T20:28:00Z', 'business', '2024-12-05 03:16:16'),
+(87, 'Cheerios effect inspires novel robot design - Ars Technica', 'Content not available.', 'Jennifer Ouellette', '2024-12-03T15:39:00Z', 'business', '2024-12-05 03:16:16'),
+(88, 'A New Dogma Of Molecular Biology: A Paradigm Shift - Forbes', '02 February 2023, Hesse, Marburg: A press spokeswoman points to a plasmid model at the Görzhausen I ... [+] Biontech site. Photo: Sebastian Christoph Gollnow/dpa (Photo by Sebastian Christoph Gollnow… [+6880 chars]', 'William A. Haseltine', '2024-12-03T13:49:00Z', 'business', '2024-12-05 03:16:16'),
+(89, 'Elon Musk\'s SpaceX wins $843,000,000 contract to destroy the International Space Station - UNILAD', 'SpaceX has won a contract to help destroy NASA\'s International Space Station - and it\'s set to take place sooner than you\'d think. \r\nBuilt in 1998, the ISS was created in collaboration with NASA, Ros… [+2359 chars]', 'Ellie Kemp', '2024-12-03T13:44:37Z', 'business', '2024-12-05 03:16:16'),
+(90, 'For 60 Years, an Eerie Quack Sounded Across the Seas. Scientists Just Found Its Source. - Yahoo! Voices', '<ul><li>Since the 1960s, a strange, repetitious quacking noise called a bio-duck, which can frequently be heard in the Southern Ocean, has puzzled marine biologists and underwater acoustic experts.\r\n… [+3335 chars]', 'Darren Orf', '2024-12-03T13:30:00Z', 'business', '2024-12-05 03:16:16'),
+(91, 'Could dark matter have been forged in a \'Dark Big Bang?\' - Space.com', 'Our common understanding of the universe tells us that all matter and energy were created at the beginning of time during a period of rapid inflation called the Big Bang.\r\nHowever, in 2023, Katherine… [+6949 chars]', 'Robert Lea', '2024-12-03T13:00:00Z', 'business', '2024-12-05 03:16:16'),
+(92, 'Earth from space: Crimea\'s \'putrid sea\' creates beautiful rainbow of color but smells like rotten eggs - Livescience.com', 'Where is it? Sivash, Crimean Peninsula [46.0627481, 34.3826701]\r\nWhat\'s in the photo? A series of shallow, multicolor lagoons known as the \"putrid sea\"\r\nWhich satellite took the photo? Landsat 8\r\nWhe… [+3970 chars]', 'Harry Baker', '2024-12-03T10:30:31Z', 'business', '2024-12-05 03:16:16'),
+(93, 'Countdown to an ice-free Arctic: Research warns of accelerated timelines - Phys.org', 'The first summer on record that melts practically all of the Arctic\'s sea ice, an ominous milestone for the planet, could occur as early as 2027.\r\nFor the first time, an international research team, … [+4976 chars]', 'University of Colorado at Boulder', '2024-12-03T10:00:01Z', 'business', '2024-12-05 03:16:16'),
+(94, 'The Voyager Probes Are Dying - Futurism', 'The end is nigh.\r\nMy Battery Is Low\r\nNASA\'s Voyager 1 and 2 spacecraft have long left the farthest reaches of the solar system, entering interstellar space in 2012 and 2018 respectively.\r\nThe pair we… [+2572 chars]', 'Victor Tangermann', '2024-12-03T18:10:29Z', 'business', '2024-12-05 03:16:16'),
+(95, 'Scientists Discover Key Protein That Could Reverse Vascular Aging - SciTechDaily', 'Nup93 is crucial for endothelial cell health and vascular aging prevention. Research shows restoring Nup93 reverses damage and offers potential therapies for cardiovascular diseases.\r\nOver the past s… [+2946 chars]', 'Unknown', '2024-12-03T07:41:47Z', 'business', '2024-12-05 03:16:16'),
+(96, 'Close approach of asteroid 2020 XR - European Space Agency', 'Content not available.', 'Unknown', '2024-12-03T10:10:34Z', 'business', '2024-12-05 03:16:16'),
+(97, 'PSLV-C59/Proba-3 Mission - ISRO', 'PSLV-C59 vehicle will carry Proba-3 spacecraft into a highly elliptical orbit as a Dedicated commercial mission of NewSpace India Limited (NSIL).\r\nProba-3 is an In-Orbit Demonstration (IOD) mission o… [+350 chars]', 'Unknown', '2024-12-03T11:33:13Z', 'business', '2024-12-05 03:16:16'),
+(98, 'Flood Wreaks Havoc on NASA Spacecraft - Futurism', 'Scientists are \"working to assess the extent of the damage, but it is severe.\"\r\nBad Flood\r\nA burst water pipe has wreaked havoc on data sent by a pair of NASA spacecraft  the Solar Dynamics Observato… [+2034 chars]', 'Victor Tangermann', '2024-12-03T15:06:03Z', 'business', '2024-12-05 03:16:16'),
+(99, 'Exploring Alien Oceans: NASA’s Bold Mission to Uranus’ Moons - SciTechDaily', 'Using advanced models to detect rotational wobbles, NASA seeks to uncover hidden oceans on Uranus’s moons, potentially expanding the known environments where life could exist in the galaxy. Credit: D… [+5841 chars]', 'Unknown', '2024-12-03T02:55:04Z', 'business', '2024-12-05 03:16:16'),
+(100, 'Meet The Purple Frog, A Dinosaur-Era “Living Fossil” That Emerged Over 80 Million Years Ago - IFLScience', 'In 2003, scientists described a new family of frogs the first time such a discovery had been made among the anurans in around 70 years. Their prize was a weird one, a purple frog described as the coe… [+5342 chars]', 'Rachael Funnell', '2024-12-03T05:20:17Z', 'business', '2024-12-05 03:16:16'),
+(101, 'Genes Older Than Animal Life Itself Were Inserted Into Mice. Here\'s What Happened. - ScienceAlert', 'With their little beady black eyes and dappled gray fur, the mice born in a recent lab experiment in Hong Kong are unlike any others of their species, or indeed any other animal.\r\nAnd yet in spite of… [+4747 chars]', 'Michelle Starr', '2024-12-03T05:52:22Z', 'business', '2024-12-05 03:16:16'),
+(102, 'This Massive Underwater Mountain Range Was Made by a \'Moving\' Hotspot - ScienceAlert', 'The Indian Ocean is home to a mountain range longer than the North American Rockies, and yet today, all 5,000 kilometers (3,107 miles) of it are hidden under the sea.\r\nA new study delves deep beneath… [+3837 chars]', 'Carly Cassella', '2024-12-03T06:34:29Z', 'business', '2024-12-05 03:16:16');
 
 -- --------------------------------------------------------
 
@@ -149,7 +201,10 @@ INSERT INTO `reading_history` (`HistoryID`, `Username`, `ArticleID`, `Action`, `
 (3, 'indu', 8, 'read', '2024-12-04 19:04:50'),
 (4, 'indu', 8, 'skip', '2024-12-04 19:04:58'),
 (5, 'indu', 37, 'skip', '2024-12-04 19:05:20'),
-(6, 'indu', 37, 'skip', '2024-12-04 19:05:31');
+(6, 'indu', 37, 'skip', '2024-12-04 19:05:31'),
+(7, 'indu', 54, 'read', '2024-12-04 20:21:52'),
+(8, 'vih', 72, 'read', '2024-12-04 21:45:34'),
+(9, 'vih', 78, 'skip', '2024-12-04 21:45:44');
 
 -- --------------------------------------------------------
 
@@ -173,7 +228,8 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`UserID`, `Username`, `Password`, `Name`, `Email`, `CreatedAt`) VALUES
 (3, 'indu', '0000', 'vihnga induwara', 'vihnga@gmail.com', '2024-12-04 14:24:52'),
 (2, 'jane_doe', 'password456', 'Jane Doe', 'jane.doe@example.com', '2024-12-04 14:23:18'),
-(1, 'john_doe', 'password123', 'John Doe', 'john.doe@example.com', '2024-12-04 14:23:18');
+(1, 'john_doe', 'password123', 'John Doe', 'john.doe@example.com', '2024-12-04 14:23:18'),
+(4, 'vih', '0000', 'chamal sanjeewa', 'vih@gmail.com', '2024-12-04 21:44:07');
 
 --
 -- Indexes for dumped tables
@@ -227,7 +283,7 @@ ALTER TABLE `admins`
 -- AUTO_INCREMENT for table `articles`
 --
 ALTER TABLE `articles`
-  MODIFY `ArticleID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `ArticleID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=103;
 
 --
 -- AUTO_INCREMENT for table `preferences`
@@ -239,13 +295,13 @@ ALTER TABLE `preferences`
 -- AUTO_INCREMENT for table `reading_history`
 --
 ALTER TABLE `reading_history`
-  MODIFY `HistoryID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `HistoryID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `UserID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `UserID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables

@@ -1,7 +1,10 @@
 package Model;
 
 import DB.DatabaseHandler;
-
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
 import java.sql.*;
 import java.util.Scanner;
 
@@ -77,12 +80,13 @@ public class Admin {
                 System.out.println("1️⃣. View Users");
                 System.out.println("2️⃣. Manage Users");
                 System.out.println("3️⃣. View Reports");
-                System.out.println("4️⃣. Logout");
-                System.out.print("💡 Please select an option (1-4): ");
+                System.out.println("4️⃣. Download Report");
+                System.out.println("5️⃣. Logout");
+                System.out.print("💡 Please select an option (1-5): ");
 
                 // Validate input for a valid integer choice
                 if (!input.hasNextInt()) {
-                    System.out.println("❌ Invalid input. Please enter a number between 1 and 4.");
+                    System.out.println("❌ Invalid input. Please enter a number between 1 and 5.");
                     input.nextLine(); // Clear invalid input
                     continue;
                 }
@@ -105,18 +109,54 @@ public class Admin {
                         viewReports();
                         break;
                     case 4:
+                        System.out.println("💾 Downloading report...");
+                        downloadReport();
+                        break;
+                    case 5:
                         System.out.println("🔒 Logging out... Goodbye!");
                         running = false; // Exit the menu
                         break;
                     default:
-                        // Handle invalid choices outside 1-4 range
-                        System.out.println("❌ Invalid choice. Please select a number between 1 and 4.");
+                        // Handle invalid choices outside 1-5 range
+                        System.out.println("❌ Invalid choice. Please select a number between 1 and 5.");
                 }
             } catch (Exception e) {
                 // General exception handling to catch any unexpected issues
                 System.err.println("⚠️ An error occurred: " + e.getMessage());
                 input.nextLine(); // Clear the scanner buffer
             }
+        }
+    }
+
+    // Method to download report as a text file
+    private void downloadReport() {
+        try {
+            // Sample report content (you can replace this with actual report data)
+            String reportContent = "Admin Report\n\n";
+            reportContent += "Total Users: 50\n";
+            reportContent += "Active Users: 40\n";
+            reportContent += "Inactive Users: 10\n";
+            reportContent += "Date: " + java.time.LocalDate.now() + "\n";
+            reportContent += "\nEnd of Report\n";
+
+            // Define the file path
+            String filePath = "admin_report.txt";
+            File reportFile = new File(filePath);
+
+            // Check if the file already exists and delete it if so
+            if (reportFile.exists()) {
+                reportFile.delete();
+            }
+
+            // Create a new file and write the report content to it
+            try (FileWriter writer = new FileWriter(reportFile)) {
+                writer.write(reportContent);
+                System.out.println("✅ Report successfully downloaded as 'admin_report.txt'.");
+            } catch (IOException e) {
+                System.err.println("❌ Error writing to the file: " + e.getMessage());
+            }
+        } catch (Exception e) {
+            System.err.println("⚠️ An error occurred while generating the report: " + e.getMessage());
         }
     }
 
